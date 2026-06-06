@@ -49,8 +49,7 @@ jobs:
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
 
       - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
-
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
       - name: Copy Environment File
         run: cp .env.example .env
 
