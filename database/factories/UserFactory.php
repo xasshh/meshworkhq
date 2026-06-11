@@ -46,6 +46,21 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function client(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'client',
+        ]);
+    }
+
+    public function professional(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'professional',
+            'credits' => 10,
+        ]);
+    }
+
     /**
      * Indicate that the model has two-factor authentication configured.
      */

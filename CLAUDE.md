@@ -200,7 +200,42 @@ vendor/bin/pint --dirty --format agent
 composer run lint:check
 ```
 
+## Domain Overview
+
+Meshwork HQ is a two-sided marketplace connecting **clients** (who post project briefs) with **professionals** (who pay credits to unlock and pitch on briefs).
+
+**Core flow:**
+1. Client posts a Brief → it enters `Draft` → `AiReview` → `Published`
+2. On publish, `BriefPublished` event fires → `MatchBriefToAlerts` listener → `AlertService::initiate()` sends wave-based notifications to matched professionals
+3. Professional pays 1 credit → `UnlockService::unlock()` deducts credit, creates `Unlock` record, auto-creates a `Conversation` thread, fires `BriefUnlocked`
+4. Client sees pitches, moves brief through `ReceivingPitches` → `Shortlisting` → `Hired`/`Closed`; briefs expire after 30 days (hourly `ExpireOverdueBriefsJob`)
+
 ## Architecture
+
+### Roles and routing
+
+Two roles (`App\Enums\Role`): `client` and `professional`. Each role has separate register/login pages and route prefixes (`/client/*`, `/professional/*`). The `role:professional` / `role:client` middleware alias maps to `App\Http\Middleware\RoleMiddleware`. The `/dashboard` route redirects to the role-appropriate dashboard. `User::isClient()` / `isProfessional()` are the canonical role checks.
+
+### Brief lifecycle (BriefStatus enum)
+
+```
+Draft → AiReview → Published → ReceivingPitches → Shortlisting → Hired
+                                                              ↘ Closed / Expired
+```
+
+`BriefStatus::isActive()` covers Published/ReceivingPitches/Shortlisting. `canReceivePitches()` covers Published/ReceivingPitches. Briefs are addressed by **ULID** (not integer ID) in all URLs — `Brief::where('ulid', $ulid)`.
+
+### Alert matching (wave system)
+
+`MatchingService::findCandidates()` hard-filters professionals by skill tag overlap and profile completeness (≥70%). `splitIntoWaves()` divides candidates into Wave 1 (top 10, immediate), Wave 2 (11–25, +6 h), Wave 3 (26–50, +24 h). Anti-spam caps: 50 alerts/brief total, 20 alerts/professional/24 h.
+
+### Credit system
+
+Professionals start with 3 welcome credits (`CreditService::issueWelcomeBonus()`). All credit mutations go through `CreditService::award()` / `deduct()` which are **idempotent** — duplicate `reference` strings are silently returned. `UnlockService::unlock()` is the single atomic entry point for the spend-unlock-converse sequence; never call `CreditService::deduct()` directly for unlocks.
+
+### Service layer
+
+All domain services (`BriefService`, `CreditService`, `UnlockService`, `AlertService`, `MatchingService`) are `final` classes in `app/Services/` resolved via Laravel's DI container. They throw typed domain exceptions (`InsufficientCreditsException`, `BriefNotAvailableException`, `AlreadyUnlockedException`) that callers are expected to catch.
 
 ### Volt-style Livewire pages
 
