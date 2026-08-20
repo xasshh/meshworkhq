@@ -100,7 +100,9 @@ new #[Title('Conversation')] class extends Component
                 </p>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2 shrink-0">
+            {{-- Not shrink-0: these badges sit beside a name on one flex row, and
+                 refusing to shrink pushed them off the side of a phone screen. --}}
+            <div class="flex flex-wrap items-center justify-end gap-2 min-w-0">
                 <x-verified-badge :user="$counterpart" />
                 <x-track-record :user="$counterpart" />
                 <span class="pill" data-tone="{{ $brief->status->isActive() ? 'live' : 'muted' }}">{{ $brief->status->label() }}</span>

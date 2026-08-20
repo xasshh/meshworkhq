@@ -66,7 +66,10 @@ new #[Title('My pitches')] class extends Component
     />
 
     @if($unlocks->total() > 0)
-        <div class="mt-6 panel overflow-x-auto">
+        {{-- relative matters: the sr-only label in the actions column is absolutely
+             positioned, so without a containing block here it escapes this scroller
+             and drags the whole page sideways on a phone. --}}
+        <div class="mt-6 panel overflow-x-auto relative">
             <table class="w-full min-w-[44rem] text-sm">
                 <thead>
                     <tr class="bg-chalk-soft">

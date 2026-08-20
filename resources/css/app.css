@@ -307,6 +307,10 @@ select:focus[data-flux-control] {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        /* An email is a single unbreakable token in a monospace face. Without
+           this the row cannot shrink, so it sets the panel's min-content width
+           and pushes the entire page sideways on a phone. */
+        flex-wrap: wrap;
     }
 
     .seal-key {
@@ -316,6 +320,7 @@ select:focus[data-flux-control] {
         text-transform: uppercase;
         color: var(--color-ink-faint);
         min-width: 4.5rem;
+        flex: none;
     }
 
     .seal-redact {
@@ -334,6 +339,8 @@ select:focus[data-flux-control] {
         font-family: var(--font-data);
         font-size: 0.75rem;
         color: var(--color-ink);
+        min-width: 0;
+        overflow-wrap: anywhere;
     }
 
     /* Status pill */
@@ -351,6 +358,7 @@ select:focus[data-flux-control] {
         background: var(--color-chalk-soft);
         color: var(--color-ink-soft);
         white-space: nowrap;
+        max-width: 100%;
     }
 
     .pill::before {
