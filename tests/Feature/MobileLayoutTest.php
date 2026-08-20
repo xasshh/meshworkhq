@@ -46,3 +46,17 @@ it('lets the conversation header badges shrink on a narrow screen', function () 
     // there means the row keeps its full width and overflows the screen.
     expect($markup)->not->toContain('items-center gap-2 shrink-0');
 });
+
+it('lets a pasted token wrap instead of widening the message thread', function () {
+    $markup = file_get_contents(resource_path('views/pages/shared/⚡conversation.blade.php'));
+
+    preg_match('/<p class="([^"]*)">\{\{ \$message->body \}\}<\/p>/', $markup, $body);
+
+    // Measured on a 375px viewport with a 120 character token and no spaces:
+    // break-words (overflow-wrap: break-word) left 802px of horizontal scroll,
+    // because it only breaks a word that would overflow its line box and does
+    // not feed into how wide the bubble asks to be. overflow-wrap: anywhere
+    // does count toward intrinsic sizing, and brought it to zero.
+    expect($body[1] ?? '')->toContain('wrap-anywhere')
+        ->and($body[1] ?? '')->not->toContain('break-words');
+});

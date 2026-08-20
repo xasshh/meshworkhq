@@ -101,7 +101,7 @@ new #[Title('Verification')] class extends Component
             </p>
         @elseif($this->status === VerificationStatus::Pending)
             <p class="text-sm text-ink-soft">
-                {{ __('Submitted :when. Reviews are usually done within one working day, and we will email you either way.', ['when' => auth()->user()->verification_submitted_at?->diffForHumans()]) }}
+                {{ __('Submitted :when. Every submission is checked by a person, and we will email you as soon as there is a decision.', ['when' => auth()->user()->verification_submitted_at?->diffForHumans()]) }}
             </p>
         @elseif($this->status === VerificationStatus::Rejected)
             <p class="text-sm text-ink-soft">

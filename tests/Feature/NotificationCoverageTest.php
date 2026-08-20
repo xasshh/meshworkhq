@@ -9,6 +9,8 @@ use App\Notifications\BriefPublishedNotification;
 use App\Notifications\BriefUnlockedNotification;
 use App\Notifications\HiredNotification;
 use App\Notifications\NewPitchNotification;
+use App\Notifications\VerificationApprovedNotification;
+use App\Notifications\VerificationRejectedNotification;
 use App\Services\BriefService;
 use App\Services\UnlockService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,6 +37,8 @@ test('every notification is queued and goes to both mail and in app', function (
     BriefUnlockedNotification::class,
     HiredNotification::class,
     NewPitchNotification::class,
+    VerificationApprovedNotification::class,
+    VerificationRejectedNotification::class,
 ]);
 
 test('publishing a brief emails the client and the matched professionals', function () {

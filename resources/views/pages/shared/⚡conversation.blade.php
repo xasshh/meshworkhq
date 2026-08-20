@@ -149,7 +149,7 @@ new #[Title('Conversation')] class extends Component
             <div class="flex {{ $mine ? 'justify-end' : 'justify-start' }}" wire:key="message-{{ $message->id }}">
                 <div class="max-w-[80%] sm:max-w-[70%] grid gap-1.5">
                     <div class="{{ $mine ? 'bg-ink text-paper' : 'bg-paper text-ink border border-line' }} px-4 py-3">
-                        <p class="text-sm leading-relaxed whitespace-pre-line">{{ $message->body }}</p>
+                        <p class="text-sm leading-relaxed whitespace-pre-line wrap-anywhere">{{ $message->body }}</p>
                     </div>
                     <p class="font-data text-[10px] text-ink-faint {{ $mine ? 'text-right' : '' }}">
                         {{ $mine ? __('You') : $message->sender->name }}

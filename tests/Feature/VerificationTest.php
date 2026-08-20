@@ -4,10 +4,13 @@ use App\Enums\VerificationStatus;
 use App\Exceptions\VerificationNotAllowedException;
 use App\Models\Brief;
 use App\Models\User;
+use App\Notifications\VerificationApprovedNotification;
+use App\Notifications\VerificationRejectedNotification;
 use App\Services\Verification\NinVerificationResult;
 use App\Services\Verification\NinVerifier;
 use App\Services\VerificationService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
@@ -173,4 +176,42 @@ test('an unverified client shows no badge', function () {
     Livewire::actingAs($professional)
         ->test('pages::professional.brief-detail', ['ulid' => $brief->ulid])
         ->assertDontSee('Verified');
+});
+
+/**
+ * The verification page tells a client they will hear back either way. A
+ * decision that reaches nobody makes that a lie, and leaves them reloading the
+ * page to find out whether anything happened.
+ */
+test('an approval reaches the client', function () {
+    Notification::fake();
+
+    $client = User::factory()->client()->create();
+    $client->forceFill(['verification_status' => VerificationStatus::Pending])->save();
+
+    app(VerificationService::class)->approve($client, 'Adaeze Okonkwo');
+
+    Notification::assertSentTo($client, VerificationApprovedNotification::class);
+});
+
+test('a rejection reaches the client and carries the reason', function () {
+    Notification::fake();
+
+    $client = User::factory()->client()->create();
+    $client->forceFill(['verification_status' => VerificationStatus::Pending])->save();
+
+    app(VerificationService::class)->reject($client, 'The name did not match the certificate.');
+
+    Notification::assertSentTo(
+        $client,
+        VerificationRejectedNotification::class,
+        function (VerificationRejectedNotification $notification) use ($client) {
+            $mail = $notification->toMail($client);
+
+            // Without the reason a rejection leaves someone guessing what to fix.
+            return collect($mail->introLines)->contains(
+                fn (string $line): bool => str_contains($line, 'The name did not match the certificate.')
+            );
+        }
+    );
 });

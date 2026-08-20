@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\VerificationStatus;
 use App\Exceptions\VerificationNotAllowedException;
 use App\Models\User;
+use App\Notifications\VerificationApprovedNotification;
+use App\Notifications\VerificationRejectedNotification;
 use App\Services\Verification\NinVerifier;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -104,6 +106,9 @@ final class VerificationService
         if ($document) {
             Storage::disk(self::DISK)->delete($document);
         }
+
+        // The verification page promises the client will hear back either way.
+        $user->notify(new VerificationApprovedNotification);
     }
 
     public function reject(User $user, string $reason): void
@@ -120,6 +125,9 @@ final class VerificationService
         if ($document) {
             Storage::disk(self::DISK)->delete($document);
         }
+
+        // A rejection is useless without its reason, so it travels with one.
+        $user->notify(new VerificationRejectedNotification($reason));
     }
 
     /** @throws VerificationNotAllowedException */
