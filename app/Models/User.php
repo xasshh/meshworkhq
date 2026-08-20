@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -129,6 +130,12 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      *
      * @var array<string, string>
      */
+    /**
+     * The completeness a professional must reach before the matcher will alert
+     * them. The dashboard and profile page both quote this figure.
+     */
+    private const PROFILE_READY_PERCENT = 70;
+
     private const PROFILE_FIELDS = [
         'name' => 'Your name',
         'email' => 'Email address',
@@ -165,7 +172,53 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     public function isProfileReady(): bool
     {
-        return $this->profileCompleteness() >= 70;
+        return $this->profileCompleteness() >= self::PROFILE_READY_PERCENT;
+    }
+
+    /**
+     * The SQL twin of isProfileReady().
+     *
+     * The matcher selects candidates in a single query with a limit, so the
+     * readiness rule has to be expressible in the database rather than applied
+     * afterwards in PHP, which would silently shrink the wave. Both sides
+     * derive their threshold from minimumFilledProfileFields(), and
+     * ProfileReadinessTest asserts they agree for every profile shape, so the
+     * gate the dashboard promises cannot drift from the one the matcher runs.
+     */
+    public function scopeProfileReady(Builder $query): Builder
+    {
+        $filled = collect(array_keys(self::PROFILE_FIELDS))
+            ->map(function (string $field): string {
+                // skill_tags is a json column on MySQL. Comparing one against a
+                // bare '' raises "invalid JSON text", so read it as text first;
+                // that also lets the same expression run on SQLite in tests.
+                if ($field === 'skill_tags') {
+                    return "CASE WHEN `skill_tags` IS NOT NULL AND CAST(`skill_tags` AS CHAR) NOT IN ('', '[]') THEN 1 ELSE 0 END";
+                }
+
+                return "CASE WHEN `{$field}` IS NOT NULL AND `{$field}` <> '' THEN 1 ELSE 0 END";
+            })
+            ->implode(' + ');
+
+        return $query->whereRaw("({$filled}) >= ?", [self::minimumFilledProfileFields()]);
+    }
+
+    /**
+     * The fewest filled fields that still round up to the readiness threshold.
+     * Derived from the same formula profileCompleteness() uses, so adding a
+     * profile field or moving the threshold updates both sides at once.
+     */
+    private static function minimumFilledProfileFields(): int
+    {
+        $total = count(self::PROFILE_FIELDS);
+
+        for ($filled = 0; $filled <= $total; $filled++) {
+            if ((int) round($filled / $total * 100) >= self::PROFILE_READY_PERCENT) {
+                return $filled;
+            }
+        }
+
+        return $total;
     }
 
     // ── Track record ───────────────────────────────────────────

@@ -40,7 +40,7 @@ test('every notification is queued and goes to both mail and in app', function (
 test('publishing a brief emails the client and the matched professionals', function () {
     $client = User::factory()->client()->create();
 
-    $matched = User::factory()->professional()->create([
+    $matched = User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Brand designer.',
     ]);

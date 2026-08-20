@@ -30,7 +30,10 @@ console_command = 'php /var/www/html/artisan tinker'
   DB_CONNECTION = 'mysql'
   # DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME and DB_PASSWORD are set as Fly
   # secrets, never here: this file is committed.
-  QUEUE_CONNECTION = 'sync'
+  # Must not be sync: the alert waves are dispatched with +6h and +24h
+  # delays, and sync runs them inline and immediately. A worker runs under
+  # supervisor, see .fly/supervisor/conf.d/worker.conf.
+  QUEUE_CONNECTION = 'database'
 
 [mounts]
   source = 'data'
@@ -41,7 +44,10 @@ console_command = 'php /var/www/html/artisan tinker'
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0
+  # One machine stays up so the worker is alive to run a delayed wave job
+  # and the scheduler at the hour it is due, not whenever a visitor next
+  # happens to wake the app.
+  min_machines_running = 1
   processes = ['app']
 
 [[vm]]

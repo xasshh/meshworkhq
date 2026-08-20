@@ -20,7 +20,7 @@ test('dispatch wave creates alerts and notifies professionals', function () {
         'skill_tags' => ['Branding'],
     ]);
 
-    $professionals = User::factory()->professional()->count(3)->create([
+    $professionals = User::factory()->alertReady()->count(3)->create([
         'skill_tags' => ['Branding'],
         'bio' => 'Experienced designer',
     ]);
@@ -38,7 +38,7 @@ test('dispatch wave skips professionals over daily spam cap', function () {
     $client = User::factory()->client()->create();
     $brief = Brief::factory()->published()->for($client, 'client')->create();
 
-    $professional = User::factory()->professional()->create(['bio' => 'Designer']);
+    $professional = User::factory()->alertReady()->create(['bio' => 'Designer']);
 
     // Simulate 20 existing alerts today for this professional.
     $otherClient = User::factory()->client()->create();
@@ -63,7 +63,7 @@ test('dispatch wave skips when brief is no longer active', function () {
 
     $client = User::factory()->client()->create();
     $brief = Brief::factory()->for($client, 'client')->create(['status' => BriefStatus::Closed]);
-    $professional = User::factory()->professional()->create(['bio' => 'Designer']);
+    $professional = User::factory()->alertReady()->create(['bio' => 'Designer']);
 
     app(AlertService::class)->dispatchWave($brief, collect([$professional]), 1);
 
@@ -76,12 +76,12 @@ test('matching service finds candidates with skill overlap', function () {
         'skill_tags' => ['SEO', 'Copywriting'],
     ]);
 
-    $matched = User::factory()->professional()->count(2)->create([
+    $matched = User::factory()->alertReady()->count(2)->create([
         'skill_tags' => ['SEO', 'Photography'],
         'bio' => 'SEO specialist',
     ]);
 
-    $unmatched = User::factory()->professional()->count(2)->create([
+    $unmatched = User::factory()->alertReady()->count(2)->create([
         'skill_tags' => ['Photography', 'Videography'],
         'bio' => 'Photographer',
     ]);
@@ -94,7 +94,7 @@ test('matching service finds candidates with skill overlap', function () {
 });
 
 test('split into waves returns correct sizes', function () {
-    $users = User::factory()->professional()->count(50)->create(['bio' => 'Pro']);
+    $users = User::factory()->alertReady()->count(50)->create(['bio' => 'Pro']);
     $waves = app(MatchingService::class)->splitIntoWaves($users);
 
     expect($waves[1]->count())->toBe(10)

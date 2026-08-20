@@ -62,6 +62,25 @@ class UserFactory extends Factory
     }
 
     /**
+     * A professional whose profile clears the 70% completeness gate.
+     *
+     * The matcher will not alert a profile below that threshold, so any test
+     * that expects a professional to be matched needs this rather than the
+     * bare professional() state, which fills nothing beyond name and email.
+     * Pass skill_tags to create() to override the default skill.
+     */
+    public function alertReady(): static
+    {
+        return $this->professional()->state(fn (array $attributes) => [
+            'professional_title' => fake()->jobTitle(),
+            'phone' => '0803'.fake()->numerify('#######'),
+            'bio' => fake()->sentence(12),
+            'portfolio_url' => 'https://'.fake()->domainName(),
+            'skill_tags' => ['design'],
+        ]);
+    }
+
+    /**
      * Indicate that the model has two-factor authentication configured.
      */
     public function withTwoFactor(): static

@@ -27,12 +27,11 @@ final class MatchingService
             ->whereNotIn('id', $alreadyAlerted)
             ->where('credits', '>=', 0);
 
-        // Rule: Profile must be ≥ 70% complete (alert-ready).
-        // We approximate this by requiring at minimum a bio or skill_tags.
-        $query->where(function (Builder $q) {
-            $q->whereNotNull('bio')
-                ->orWhereNotNull('skill_tags');
-        });
+        // Rule: Profile must be >= 70% complete (alert-ready). Enforced in SQL
+        // by User::scopeProfileReady, which is the query side of
+        // User::isProfileReady, so what the dashboard promises a professional
+        // is exactly what decides whether they are alerted.
+        $query->profileReady();
 
         // Rule: Skill overlap — brief skill_tags must intersect professional skill_tags.
         if (! empty($brief->skill_tags)) {

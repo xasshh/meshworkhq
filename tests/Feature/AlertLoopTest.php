@@ -43,7 +43,7 @@ function publishBriefFor(User $client, array $skillTags = ['Brand Identity']): B
 test('a matched professional sees the brief in their alert feed', function () {
     $client = User::factory()->client()->create();
 
-    $professional = User::factory()->professional()->create([
+    $professional = User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity', 'Logo Design'],
         'bio' => 'Brand designer of ten years.',
     ]);
@@ -64,7 +64,7 @@ test('a matched professional sees the brief in their alert feed', function () {
 test('an unmatched professional does not see the brief', function () {
     $client = User::factory()->client()->create();
 
-    $unmatched = User::factory()->professional()->create([
+    $unmatched = User::factory()->alertReady()->create([
         'skill_tags' => ['Accounting'],
         'bio' => 'Numbers person.',
     ]);
@@ -80,7 +80,7 @@ test('an unmatched professional does not see the brief', function () {
 test('the matched brief also surfaces on the professional overview', function () {
     $client = User::factory()->client()->create();
 
-    $professional = User::factory()->professional()->create([
+    $professional = User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Brand designer.',
     ]);
@@ -95,7 +95,7 @@ test('the matched brief also surfaces on the professional overview', function ()
 test('the sidebar badge counts the unread alert', function () {
     $client = User::factory()->client()->create();
 
-    $professional = User::factory()->professional()->create([
+    $professional = User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Brand designer.',
     ]);
@@ -118,7 +118,7 @@ test('the sidebar badge counts the unread alert', function () {
 test('a professional can unlock a matched brief and land in a conversation', function () {
     $client = User::factory()->client()->create();
 
-    $professional = User::factory()->professional()->create([
+    $professional = User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Brand designer.',
         'credits' => 3,
@@ -146,7 +146,7 @@ test('a professional can unlock a matched brief and land in a conversation', fun
 test('a professional with no skill tags is never matched', function () {
     $client = User::factory()->client()->create();
 
-    $professional = User::factory()->professional()->create([
+    $professional = User::factory()->alertReady()->create([
         'skill_tags' => null,
         'bio' => 'I have not tagged any skills.',
     ]);
@@ -160,7 +160,7 @@ test('a professional with no skill tags is never matched', function () {
 test('a draft brief alerts nobody until it is published', function () {
     $client = User::factory()->client()->create();
 
-    User::factory()->professional()->create([
+    User::factory()->alertReady()->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Brand designer.',
     ]);

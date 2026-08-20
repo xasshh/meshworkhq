@@ -251,7 +251,9 @@ Draft → Published → ReceivingPitches → Shortlisting → Hired
 
 ### Alert matching (wave system)
 
-`MatchingService::findCandidates($brief, limit: 50)` hard-filters professionals: excludes anyone already alerted for that brief, requires skill-tag overlap (`whereJsonContains` per tag), and requires **a bio or skill_tags present** — this is a deliberate approximation of the spec's "≥70% profile complete" rule. `User::isProfileReady()` implements the real 70% check but the matcher does not call it; don't assume alerted professionals pass it.
+`MatchingService::findCandidates($brief, limit: 50)` hard-filters professionals: excludes anyone already alerted for that brief, requires skill-tag overlap (`orWhereJsonContains` per tag), and requires the profile to be **at least 70% complete**, via `User::scopeProfileReady()`.
+
+That scope is the SQL twin of `User::isProfileReady()`: the matcher selects and limits in one query, so the rule has to run in the database rather than filtering afterwards in PHP, which would silently shrink the wave. Both derive their threshold from `minimumFilledProfileFields()`, so adding a profile field or moving the percentage updates both at once, and `tests/Feature/ProfileReadinessTest.php` asserts they agree for all 32 profile shapes. This matters because the dashboard tells professionals "alerts are paused below 70%" — the gate the matcher runs and the gate the UI promises must not drift apart. Use `User::factory()->alertReady()` for any test that expects a professional to be matched; the bare `professional()` state fills nothing beyond name and email and sits at 29%.
 
 `splitIntoWaves()` → Wave 1 = top 10 (immediate), Wave 2 = 11–25 (+6 h), Wave 3 = 26–50 (+24 h), each dispatched as a delayed `DispatchAlertWaveJob`. The docblocks describe waves 2/3 as conditional on unlock counts; **that gating is not implemented** — later waves are always scheduled and only stopped by `AlertService::dispatchWave()`'s guards: brief no longer unlockable, 50 alerts/brief cap, 20 alerts/professional/24 h cap.
 
@@ -476,6 +478,12 @@ Use factory states rather than hand-setting attributes: `User::factory()->client
 - `.github/workflows/lint.yml` — `composer lint` (Pint, `laravel` preset).
 - `.github/workflows/fly-deploy.yml` — every push to `main` runs `flyctl deploy --remote-only`. Treat merges to `main` as production deploys.
 
-Fly.io setup (`Dockerfile`, `fly.toml`, `.fly/`): Ubuntu + nginx + php-fpm under supervisor, assets built in a Node stage. `.fly/entrypoint.sh` runs every script in `.fly/scripts/` on boot — `migrate.sh` (creates the SQLite file on the volume, then `migrate --force`) and `caches.sh` (`config:cache`, `route:cache`, `view:cache`). A container cron runs `schedule:run` each minute, which is what drives `ExpireOverdueBriefsJob`.
+Fly.io setup (`Dockerfile`, `fly.toml`, `.fly/`): Ubuntu + nginx + php-fpm under supervisor, assets built in a Node stage. `.fly/entrypoint.sh` runs every script in `.fly/scripts/` on boot, in numeric order (see **Deployment** above).
 
-Production config to keep in mind: `QUEUE_CONNECTION=sync` in `fly.toml`, so there is **no queue worker in production** — queued listeners and delayed wave jobs run inline on the request, meaning waves 2 and 3 (+6 h / +24 h) never actually fire there. `SESSION_DRIVER=cookie`, logs go to stderr as JSON. Because config is cached at boot, `.env`-style changes require a redeploy.
+Supervisor runs four programs, and the last two are load-bearing: `nginx`, `php` (fpm), `worker` (`queue:work --queue=alerts,default`) and `cron`. The image had always installed cron and written `/etc/cron.d/laravel`, but nothing started the daemon, so `schedule:run` never fired and `ExpireOverdueBriefsJob` never ran. If you add a supervisor program, add it to `.fly/supervisor/conf.d/`; the whole directory is copied to `/etc/supervisor/`.
+
+Production config to keep in mind: `QUEUE_CONNECTION=database`. It **must never be `sync`** — sync runs a delayed job inline and immediately, so waves 2 and 3 (+6 h / +24 h) all fire at once and the wave system quietly stops existing. `min_machines_running = 1` for the same reason: a stopped machine has no worker, so a wave waits for a passing visitor to wake the app instead of firing when due. Both are guarded by `tests/Feature/QueueConfigurationTest.php`.
+
+The scheduler also runs `queue:work --stop-when-empty` every minute. On Fly that finds nothing and exits, because the supervised worker already drained it; it is there so the app still delivers alerts on shared hosting, where a long-lived process is not available and a per-minute cron is all there is.
+
+`SESSION_DRIVER=cookie`, logs go to stderr as JSON. Because config is cached at boot, `.env`-style changes require a redeploy.

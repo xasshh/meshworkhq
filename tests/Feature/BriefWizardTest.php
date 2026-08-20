@@ -19,12 +19,12 @@ test('client can publish a brief through the wizard and matched professionals ar
 
     $client = User::factory()->client()->create();
 
-    $matched = User::factory()->professional()->count(2)->create([
+    $matched = User::factory()->alertReady()->count(2)->create([
         'skill_tags' => ['Brand Identity'],
         'bio' => 'Experienced brand designer',
     ]);
 
-    $unmatched = User::factory()->professional()->create([
+    $unmatched = User::factory()->alertReady()->create([
         'skill_tags' => ['Accounting'],
         'bio' => 'Numbers person',
     ]);
