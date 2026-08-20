@@ -11,10 +11,10 @@
     x-data="{
         toasts: [],
         variants: {
-            success: { ring: 'ring-green-100',  badge: 'bg-green-500',   bar: 'bg-green-500',   title: 'Success' },
-            error:   { ring: 'ring-red-100',    badge: 'bg-red-500',     bar: 'bg-red-500',     title: 'Something went wrong' },
-            warning: { ring: 'ring-amber-100',  badge: 'bg-amber-500',   bar: 'bg-amber-500',   title: 'Heads up' },
-            info:    { ring: 'ring-blue-100',   badge: 'bg-emerald-main', bar: 'bg-emerald-main', title: 'Notice' },
+            success: { ring: 'ring-green-100',  badge: 'bg-live',        bar: 'bg-live',        title: 'Done' },
+            error:   { ring: 'ring-red-100',    badge: 'bg-critical',    bar: 'bg-critical',    title: 'Something went wrong' },
+            warning: { ring: 'ring-amber-100',  badge: 'bg-brand-deep', bar: 'bg-brand-deep', title: 'Heads up' },
+            info:    { ring: 'ring-indigo-100', badge: 'bg-ink',         bar: 'bg-ink',         title: 'Notice' },
         },
         add(detail) {
             if (! detail?.message && ! detail?.text) return;
@@ -59,12 +59,12 @@
             x-transition:leave="transition ease-in duration-300"
             x-transition:leave-start="opacity-100 translate-x-0 scale-100"
             x-transition:leave-end="opacity-0 translate-x-10 scale-95"
-            class="pointer-events-auto relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/8 ring-4"
+            class="pointer-events-auto relative overflow-hidden bg-paper border border-line shadow-xl shadow-ink/10 ring-4"
             :class="variants[toast.variant].ring"
         >
             <div class="flex items-start gap-3 p-4">
                 {{-- Icon badge --}}
-                <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-px shadow-sm"
+                <div class="w-7 h-7 flex items-center justify-center shrink-0 mt-px"
                      :class="variants[toast.variant].badge">
                     <template x-if="toast.variant === 'success'">
                         <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -82,22 +82,22 @@
 
                 {{-- Content --}}
                 <div class="flex-1 min-w-0 pt-0.5">
-                    <p class="text-sm font-bold text-slate-main leading-tight"
+                    <p class="text-sm font-semibold text-ink leading-tight"
                        x-text="toast.title ?? variants[toast.variant].title"></p>
-                    <p class="text-[13px] text-slate-500 leading-snug mt-1" x-text="toast.message"></p>
+                    <p class="text-[13px] text-ink-soft leading-snug mt-1" x-text="toast.message"></p>
                 </div>
 
                 {{-- Dismiss --}}
                 <button type="button"
                         @click="dismiss(toast.id)"
-                        class="shrink-0 w-6 h-6 rounded-md flex items-center justify-center text-slate-300 hover:text-slate-500 hover:bg-slate-50 transition-colors duration-150">
+                        class="shrink-0 w-6 h-6 flex items-center justify-center text-ink-faint hover:text-ink transition-colors duration-150">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
 
             {{-- Progress bar --}}
-            <div class="absolute bottom-0 inset-x-0 h-0.5 bg-slate-100">
-                <div class="h-full rounded-full"
+            <div class="absolute bottom-0 inset-x-0 h-0.5 bg-line-soft">
+                <div class="h-full"
                      :class="variants[toast.variant].bar"
                      :style="`animation: toast-progress ${toast.duration}ms linear forwards`"></div>
             </div>

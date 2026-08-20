@@ -8,37 +8,58 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * The Wave System
+ *
+ * Ink and brand blue, both taken from the Meshwork HQ logo: the near black of
+ * the wordmark and the steel blue of the HQ plate. Blue is the only accent, so
+ * it always means the same thing, a thing you can act on. Navy grounds the
+ * dark sections. Semantic colour (live / critical) stays separate from the
+ * accent so a status never competes with a call to action.
+ */
 @theme {
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-    --font-display: 'Syne', 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-display: 'Oswald', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-data: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* Professional Blue brand palette — replaces emerald */
-    --color-emerald-main: #1B50D4;
-    --color-emerald-deep: #143BA6;
-    --color-emerald-soft: #EEF3FF;
-    --color-emerald-border: #BDD0F9;
+    /* Ink: the near black of the logo wordmark */
+    --color-ink: #1D1F20;
+    --color-ink-deep: #101112;
+    --color-ink-soft: #55585C;
+    --color-ink-faint: #8A8D91;
 
-    /* Canvas & surfaces */
-    --color-light-canvas: #F7F9FC;
-    --color-light-card: #FFFFFF;
-    --color-slate-main: #0C1829;
+    /* Navy: the ground of every dark section */
+    --color-navy: #1E2A38;
+    --color-navy-deep: #16202B;
+    --color-navy-raised: #26364A;
 
-    /* Flux accent → blue */
-    --color-accent: #1B50D4;
-    --color-accent-content: #1B50D4;
+    /* Chalk: the ground, the logo's own background colour */
+    --color-chalk: #F2F2F3;
+    --color-chalk-soft: #FAFAFB;
+    --color-paper: #FFFFFF;
+    --color-line: #DCDCDE;
+    --color-line-soft: #E8E8EA;
+
+    /* Brand blue, taken from the logo. The single accent. */
+    --color-brand: #5980A6;
+    --color-brand-deep: #3F5F80;
+    --color-brand-lit: #7A9CBD;
+    --color-brand-wash: #EDF2F7;
+
+    /* Semantic */
+    --color-live: #1B6B51;
+    --color-live-wash: #E4F1EC;
+    --color-critical: #A32118;
+    --color-critical-wash: #FCEDEC;
+
+    /* Flux accent */
+    --color-accent: #3F5F80;
+    --color-accent-content: #3F5F80;
     --color-accent-foreground: #FFFFFF;
-
-    /* Legacy tokens */
-    --color-obsidian: #060D1F;
-    --color-slate-card: #0C1829;
-    --color-brand-gold: #C5A059;
-    --color-text-silver: #C5C6C7;
-    --color-accent-gold: #B38F44;
 
     /* Animation references */
     --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
     --animate-slide-down: slide-down 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-    --animate-pulse-ring: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -63,7 +84,70 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-line, currentColor);
+    }
+
+    body {
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+    }
+
+    /*
+     * Adire resist ground: a sparse grid of small marks, kept near invisible.
+     * Fixed so it reads as cloth the page sits on rather than a scrolling texture.
+     */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image:
+            radial-gradient(circle at 50% 50%, rgba(29, 31, 32, 0.05) 0 1.2px, transparent 1.3px),
+            radial-gradient(circle at 50% 50%, rgba(29, 31, 32, 0.05) 0 1.2px, transparent 1.3px);
+        background-size: 28px 28px, 28px 28px;
+        background-position: 0 0, 14px 14px;
+    }
+
+    h1, h2, h3, h4 {
+        text-wrap: balance;
+    }
+
+    /* Oswald sits tight, so headings get a little air. */
+    .font-display {
+        line-height: 1.06;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /*
+     * Keyboard users land on this first and can jump past the navigation.
+     * Off screen until focused rather than display:none, which would take it
+     * out of the tab order entirely and defeat the point.
+     */
+    .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 100;
+        padding: 0.75rem 1.25rem;
+        background: var(--color-ink);
+        color: var(--color-paper);
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+
+    .skip-link:focus {
+        left: 0.5rem;
+        top: 0.5rem;
+    }
+
+    /* Every interactive element keeps a visible focus ring. */
+    :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-brand-deep);
+        outline-offset: 2px;
     }
 }
 
@@ -73,38 +157,33 @@
 
 [data-flux-label] {
     @apply !mb-0 !leading-tight;
-    color: #1E293B;
+    color: var(--color-ink);
     font-weight: 600;
 }
 
 /*
- * Form control visibility — unlayered so these rules outrank every
- * Tailwind/Flux utility (including dark: variants). The platform UI
- * is light-only; typed text must always be near-black on a light field.
+ * Form control visibility. Unlayered so these rules outrank every
+ * Tailwind/Flux utility. The platform UI is light only; typed text must
+ * always be near black on a light field.
  */
 input[data-flux-control],
 textarea[data-flux-control],
 select[data-flux-control] {
-    color: #0C1829;
-    background-color: #F8FAFC;
-    border-color: #CBD5E1;
+    color: var(--color-ink);
+    background-color: var(--color-chalk-soft);
+    border-color: var(--color-line);
 }
 
 input[data-flux-control]::placeholder,
 textarea[data-flux-control]::placeholder {
-    color: #94A3B8;
+    color: var(--color-ink-faint);
 }
 
 input:focus[data-flux-control],
 textarea:focus[data-flux-control],
 select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-white;
-    background-color: #FFFFFF;
-}
-
-@keyframes pulse-ring {
-    0% { transform: scale(0.75); opacity: 1; }
-    80%, 100% { transform: scale(2.2); opacity: 0; }
+    background-color: var(--color-paper);
 }
 
 @keyframes fade-in-up {
@@ -142,67 +221,276 @@ select:focus[data-flux-control] {
     to   { width: 0%; }
 }
 
-@keyframes shimmer {
-    from { background-position: 200% center; }
-    to   { background-position: -200% center; }
+@keyframes wave-fill {
+    from { transform: scaleX(0.06); }
+    to   { transform: scaleX(var(--wave-progress, 0.5)); }
 }
 
-@keyframes float-gentle {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-4px); }
+@layer components {
+    /*
+     * The wave rail. Three segments, one per alert wave. The lit segment is
+     * where this brief sits right now and fills as the window closes.
+     */
+    .wave-rail {
+        display: grid;
+        gap: 0.375rem;
+    }
+
+    .wave-track {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3px;
+    }
+
+    .wave-seg {
+        height: 4px;
+        border-radius: 1px;
+        background: var(--color-line);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wave-seg[data-state='past'] {
+        background: var(--color-ink-faint);
+    }
+
+    .wave-seg[data-state='live']::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--color-brand);
+        transform-origin: left;
+        transform: scaleX(var(--wave-progress, 0.5));
+        animation: wave-fill 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .wave-meta {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        font-family: var(--font-data);
+        font-size: 0.625rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .wave-meta .wave-who {
+        color: var(--color-brand-deep);
+        font-weight: 600;
+    }
+
+    .wave-meta .wave-when {
+        color: var(--color-ink-faint);
+    }
+
+    /*
+     * The seal. A locked client record. Redaction here is the literal state
+     * of the data, not decoration: unpaid means unreadable.
+     */
+    .seal {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0.875rem 1rem;
+        background: var(--color-chalk-soft);
+        border: 1px dashed var(--color-line);
+    }
+
+    .seal[data-open='true'] {
+        border-style: solid;
+        background: var(--color-live-wash);
+        border-color: color-mix(in oklab, var(--color-live) 30%, transparent);
+    }
+
+    .seal-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .seal-key {
+        font-family: var(--font-data);
+        font-size: 0.5625rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--color-ink-faint);
+        min-width: 4.5rem;
+    }
+
+    .seal-redact {
+        height: 0.8125rem;
+        flex: 1;
+        max-width: 11rem;
+        background: var(--color-ink);
+        opacity: 0.16;
+    }
+
+    .seal-redact[data-width='short'] {
+        max-width: 7rem;
+    }
+
+    .seal-value {
+        font-family: var(--font-data);
+        font-size: 0.75rem;
+        color: var(--color-ink);
+    }
+
+    /* Status pill */
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4375rem;
+        font-family: var(--font-data);
+        font-size: 0.625rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 0.3125rem 0.5625rem;
+        border: 1px solid var(--color-line);
+        background: var(--color-chalk-soft);
+        color: var(--color-ink-soft);
+        white-space: nowrap;
+    }
+
+    .pill::before {
+        content: '';
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+        flex: none;
+    }
+
+    .pill[data-tone='live'] {
+        color: var(--color-live);
+        background: var(--color-live-wash);
+        border-color: color-mix(in oklab, var(--color-live) 35%, transparent);
+    }
+
+    .pill[data-tone='warn'] {
+        color: var(--color-brand-deep);
+        background: var(--color-brand-wash);
+        border-color: color-mix(in oklab, var(--color-brand-deep) 35%, transparent);
+    }
+
+    .pill[data-tone='critical'] {
+        color: var(--color-critical);
+        background: var(--color-critical-wash);
+        border-color: color-mix(in oklab, var(--color-critical) 35%, transparent);
+    }
+
+    .pill[data-tone='muted'] {
+        color: var(--color-ink-faint);
+    }
+
+    /* Fact: a labelled data point */
+    .fact {
+        display: grid;
+        gap: 0.1875rem;
+    }
+
+    .fact-key {
+        font-family: var(--font-data);
+        font-size: 0.5625rem;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--color-ink-faint);
+    }
+
+    .fact-value {
+        font-family: var(--font-data);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        color: var(--color-ink);
+    }
+
+    /* Skill tag */
+    .tag {
+        font-size: 0.6875rem;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--color-line);
+        background: var(--color-chalk-soft);
+        color: var(--color-ink-soft);
+        white-space: nowrap;
+    }
+
+    .tag[data-hit='true'] {
+        border-color: color-mix(in oklab, var(--color-brand-deep) 45%, transparent);
+        background: var(--color-brand-wash);
+        color: var(--color-brand-deep);
+        font-weight: 600;
+    }
+
+    /* Surface */
+    .panel {
+        background: var(--color-paper);
+        border: 1px solid var(--color-line);
+        box-shadow: 0 1px 2px rgba(29, 31, 32, 0.05), 0 8px 24px -12px rgba(29, 31, 32, 0.16);
+    }
+
+    /* Section eyebrow */
+    .eyebrow {
+        font-family: var(--font-data);
+        font-size: 0.625rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-ink-faint);
+    }
 }
 
 @layer utilities {
+    /*
+     * Oswald in sentence case. The default, because uppercase on every heading
+     * in the app would shout at people who are just trying to work.
+     */
     .font-display {
         font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: 0.005em;
     }
 
-    /* Card hover lift */
+    /* The poster treatment: marketing headlines only. */
+    .font-display-caps {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        line-height: 0.96;
+    }
+
+    .font-data {
+        font-family: var(--font-data);
+        font-variant-numeric: tabular-nums;
+    }
+
     .card-lift {
         transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .card-lift:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 32px -6px rgba(27, 80, 212, 0.14), 0 3px 8px -2px rgba(12, 24, 41, 0.07);
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(29, 31, 32, 0.07), 0 18px 40px -18px rgba(29, 31, 32, 0.26);
     }
 
-    /* Premium button micro-lift — apply to any CTA */
     .btn-lift {
-        transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+        transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .btn-lift:hover:not(:disabled) {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px -4px rgba(27, 80, 212, 0.32);
+        box-shadow: 0 6px 20px -6px rgba(29, 31, 32, 0.3);
     }
     .btn-lift:active:not(:disabled) {
         transform: translateY(0);
         box-shadow: none;
     }
 
-    /* Shimmer text effect for hero moments */
-    .text-shimmer {
-        background: linear-gradient(90deg, var(--color-emerald-main) 0%, #5B9CF6 50%, var(--color-emerald-main) 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: shimmer 4s linear infinite;
-    }
-
-    /* Gentle float for decorative elements */
-    .animate-float {
-        animation: float-gentle 4s ease-in-out infinite;
-    }
-
-    /* Standard animation utilities */
     .animate-fade-in-up {
         animation: var(--animate-fade-in-up);
     }
     .animate-slide-down {
         animation: var(--animate-slide-down);
-    }
-    .animate-pulse-ring {
-        animation: var(--animate-pulse-ring);
     }
     .animate-slide-in-right {
         animation: slide-in-right 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -217,32 +505,28 @@ select:focus[data-flux-control] {
         animation: toast-out 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
     }
 
-    /* Glass surface */
-    .glass {
-        background: rgba(255, 255, 255, 0.06);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.10);
+    /* Staggered feed reveal. One orchestrated moment, not scattered effects. */
+    .stagger > * {
+        animation: var(--animate-fade-in-up);
     }
-
-    /* Nav item active left-border accent */
-    .nav-active-bar {
-        position: relative;
-    }
-    .nav-active-bar::before {
-        content: '';
-        position: absolute;
-        left: -12px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 3px;
-        height: 60%;
-        background: var(--color-emerald-main);
-        border-radius: 0 2px 2px 0;
-    }
+    .stagger > *:nth-child(1) { animation-delay: 0ms; }
+    .stagger > *:nth-child(2) { animation-delay: 60ms; }
+    .stagger > *:nth-child(3) { animation-delay: 120ms; }
+    .stagger > *:nth-child(4) { animation-delay: 180ms; }
+    .stagger > *:nth-child(5) { animation-delay: 240ms; }
+    .stagger > *:nth-child(n + 6) { animation-delay: 300ms; }
 }
 
-/* Toast notification enhancement */
 .toast-wrapper {
     animation: toast-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

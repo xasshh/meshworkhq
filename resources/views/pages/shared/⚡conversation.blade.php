@@ -6,9 +6,10 @@ use App\Notifications\NewPitchNotification;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Conversation')] class extends Component {
-
+new #[Title('Conversation')] class extends Component
+{
     public Conversation $conversation;
+
     public string $body = '';
 
     public function mount(int $id): void
@@ -19,15 +20,11 @@ new #[Title('Conversation')] class extends Component {
             ->where('id', $id)
             ->where(function ($q) use ($user) {
                 $q->where('client_id', $user->id)
-                  ->orWhere('professional_id', $user->id);
+                    ->orWhere('professional_id', $user->id);
             })
             ->firstOrFail();
 
-        // Mark messages as read for the current user.
-        $this->conversation->messages()
-            ->where('sender_id', '!=', $user->id)
-            ->whereNull('read_at')
-            ->update(['read_at' => now()]);
+        $this->markIncomingAsRead();
     }
 
     public function send(): void
@@ -38,13 +35,12 @@ new #[Title('Conversation')] class extends Component {
 
         $message = Message::create([
             'conversation_id' => $this->conversation->id,
-            'sender_id'       => $user->id,
-            'body'            => $this->body,
+            'sender_id' => $user->id,
+            'body' => $this->body,
         ]);
 
         $this->conversation->update(['last_message_at' => now()]);
 
-        // Notify the other party.
         $recipient = $this->conversation->client_id === $user->id
             ? $this->conversation->professional
             : $this->conversation->client;
@@ -55,91 +51,145 @@ new #[Title('Conversation')] class extends Component {
         $this->conversation->load('messages.sender');
     }
 
-    public function render(): \Illuminate\View\View
+    private function markIncomingAsRead(): void
     {
-        return view('pages::shared.⚡conversation');
+        $this->conversation->messages()
+            ->where('sender_id', '!=', auth()->id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
     }
 
+    public function counterpart(): ?\App\Models\User
+    {
+        return $this->conversation->client_id === auth()->id()
+            ? $this->conversation->professional
+            : $this->conversation->client;
+    }
 }; ?>
 
-<div class="min-h-screen bg-[--color-emerald-soft] flex flex-col">
-    <div class="max-w-3xl mx-auto w-full px-4 py-6 flex flex-col flex-1">
+@php
+    $user = auth()->user();
+    $isPro = $user->isProfessional();
+    $counterpart = $this->counterpart();
+    $brief = $this->conversation->brief;
+@endphp
 
-        {{-- Thread header --}}
-        <div class="bg-white border border-slate-200 rounded-2xl px-6 py-4 mb-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs text-slate-400 uppercase tracking-wide mb-0.5">Brief</p>
-                    <p class="font-semibold text-[--color-slate-main] text-sm">{{ $conversation->brief->title }}</p>
-                </div>
-                <div class="text-right">
-                    @php
-                        $user = auth()->user();
-                        $other = $conversation->client_id === $user->id
-                            ? $conversation->professional
-                            : $conversation->client;
-                    @endphp
-                    <p class="text-xs text-slate-400 mb-0.5">{{ $conversation->client_id === $user->id ? 'Professional' : 'Client' }}</p>
-                    <p class="font-medium text-[--color-slate-main] text-sm">{{ $other->name }}</p>
-                    @if($other->professional_title)
-                        <p class="text-xs text-slate-400">{{ $other->professional_title }}</p>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+
+    <a href="{{ $isPro ? route('professional.messages') : route('client.messages') }}" wire:navigate
+       class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft hover:text-ink transition-colors mb-5">
+        <flux:icon name="arrow-left" variant="micro" />
+        {{ __('All messages') }}
+    </a>
+
+    {{-- Who and what this thread is about --}}
+    <header class="panel p-5 grid gap-4">
+        <div class="flex items-start gap-4">
+            <div class="w-11 h-11 bg-chalk-soft border border-line grid place-items-center shrink-0">
+                <span class="font-display text-sm text-ink-faint">{{ $counterpart?->initials() ?? '?' }}</span>
+            </div>
+
+            <div class="min-w-0 flex-1">
+                <h1 class="font-display text-lg text-ink leading-tight truncate">{{ $counterpart?->name ?? __('Unknown') }}</h1>
+                <p class="text-xs text-ink-faint mt-0.5">
+                    @if($isPro)
+                        {{ $counterpart?->company_name ?: __('Client') }}
+                    @else
+                        {{ $counterpart?->professional_title ?: __('Professional') }}
                     @endif
-                </div>
+                </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <x-verified-badge :user="$counterpart" />
+                <x-track-record :user="$counterpart" />
+                <span class="pill" data-tone="{{ $brief->status->isActive() ? 'live' : 'muted' }}">{{ $brief->status->label() }}</span>
             </div>
         </div>
 
-        {{-- Messages --}}
-        <div class="flex-1 space-y-3 mb-4" id="message-list">
-            @forelse($conversation->messages as $message)
-                @php $isMine = $message->sender_id === auth()->id(); @endphp
-                <div class="flex {{ $isMine ? 'justify-end' : 'justify-start' }}"
-                     wire:key="msg-{{ $message->id }}">
-                    <div class="max-w-[75%]">
-                        @if(!$isMine)
-                            <p class="text-xs text-slate-400 mb-1 ml-1">{{ $message->sender->name }}</p>
-                        @endif
-                        <div class="px-4 py-3 rounded-2xl text-sm leading-relaxed
-                            {{ $isMine
-                                ? 'bg-[--color-slate-main] text-white rounded-br-sm'
-                                : 'bg-white border border-slate-200 text-slate-700 rounded-bl-sm' }}">
-                            {{ $message->body }}
-                        </div>
-                        <p class="text-xs text-slate-400 mt-1 {{ $isMine ? 'text-right mr-1' : 'ml-1' }}">
-                            {{ $message->created_at->format('H:i') }}
-                            @if($isMine && $message->read_at)
-                                · Read
-                            @endif
-                        </p>
+        {{-- The unlocked contact record. This is what the credit bought. --}}
+        @if($isPro)
+            <div class="seal" data-open="true">
+                <div class="seal-row">
+                    <span class="seal-key">{{ __('Client') }}</span>
+                    <span class="seal-value">{{ $counterpart?->name }}</span>
+                </div>
+                <div class="seal-row">
+                    <span class="seal-key">{{ __('Email') }}</span>
+                    <span class="seal-value">{{ $counterpart?->email }}</span>
+                </div>
+                @if($counterpart?->phone)
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Phone') }}</span>
+                        <span class="seal-value">{{ $counterpart->phone }}</span>
                     </div>
-                </div>
-            @empty
-                <div class="text-center py-12 text-slate-400 text-sm">
-                    No messages yet. Send the first message to start the conversation.
-                </div>
-            @endforelse
-        </div>
+                @endif
+            </div>
+        @endif
 
-        {{-- Compose --}}
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-            <form wire:submit="send" class="flex gap-3">
-                <textarea wire:model="body"
-                          rows="2"
-                          placeholder="Write your message…"
-                          class="flex-1 resize-none border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[--color-emerald-main]/30 focus:border-[--color-emerald-main] transition-colors"></textarea>
-                <button type="submit"
-                        class="self-end px-5 py-2.5 bg-[--color-emerald-main] hover:bg-[--color-emerald-deep] text-white rounded-xl text-sm font-medium transition-colors flex-shrink-0">
-                    Send
-                </button>
-            </form>
+        <div class="flex items-center justify-between gap-3 pt-4 border-t border-line-soft">
+            <div class="min-w-0">
+                <p class="eyebrow">{{ __('About this brief') }}</p>
+                <p class="text-sm text-ink truncate mt-1">{{ $brief->title }}</p>
+            </div>
+            <a href="{{ $isPro ? route('professional.brief.detail', ['ulid' => $brief->ulid]) : route('client.brief.detail', ['ulid' => $brief->ulid]) }}"
+               wire:navigate class="text-xs font-semibold text-ink-soft hover:text-ink transition-colors shrink-0">
+                {{ __('Open brief') }}
+            </a>
         </div>
+    </header>
 
+    {{-- Thread --}}
+    <div class="mt-6 grid gap-3">
+        @forelse($this->conversation->messages as $message)
+            @php $mine = $message->sender_id === $user->id; @endphp
+
+            <div class="flex {{ $mine ? 'justify-end' : 'justify-start' }}" wire:key="message-{{ $message->id }}">
+                <div class="max-w-[80%] sm:max-w-[70%] grid gap-1.5">
+                    <div class="{{ $mine ? 'bg-ink text-paper' : 'bg-paper text-ink border border-line' }} px-4 py-3">
+                        <p class="text-sm leading-relaxed whitespace-pre-line">{{ $message->body }}</p>
+                    </div>
+                    <p class="font-data text-[10px] text-ink-faint {{ $mine ? 'text-right' : '' }}">
+                        {{ $mine ? __('You') : $message->sender->name }}
+                        &middot; {{ $message->created_at->format('j M, H:i') }}
+                        @if($mine && $message->read_at)
+                            &middot; {{ __('read') }}
+                        @endif
+                    </p>
+                </div>
+            </div>
+        @empty
+            <div class="panel p-8 sm:p-10 text-center grid gap-2">
+                <h2 class="font-display text-base text-ink">
+                    {{ $isPro ? __('Write the first message') : __('Nothing said yet') }}
+                </h2>
+                <p class="text-sm text-ink-soft max-w-[46ch] mx-auto">
+                    @if($isPro)
+                        {{ __('You spent a credit to get here. Say what you would do, roughly what it costs, and when you could start.') }}
+                    @else
+                        {{ __('This professional unlocked your brief. They will usually open the conversation.') }}
+                    @endif
+                </p>
+            </div>
+        @endforelse
     </div>
 
-    {{-- Scroll to bottom on load --}}
-    <script>
-        document.addEventListener('livewire:navigated', () => {
-            const list = document.getElementById('message-list');
-            if (list) list.scrollIntoView({ block: 'end' });
-        });
-    </script>
+    {{-- Composer --}}
+    <form wire:submit="send" class="mt-6 panel p-4 grid gap-3">
+        <flux:textarea
+            wire:model="body"
+            rows="3"
+            :placeholder="$isPro ? __('What you would do, what it costs, when you can start.') : __('Write a reply')"
+            :label="__('Message')"
+            class="!mb-0"
+        />
+
+        <div class="flex items-center justify-between gap-3">
+            <span class="text-[11px] text-ink-faint">{{ __('Messages are logged. Keep payment discussions on terms you both agree in writing.') }}</span>
+            <button type="submit" wire:loading.attr="disabled" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper shrink-0">
+                <span wire:loading.remove wire:target="send">{{ __('Send') }}</span>
+                <span wire:loading wire:target="send">{{ __('Sending') }}</span>
+            </button>
+        </div>
+    </form>
 </div>

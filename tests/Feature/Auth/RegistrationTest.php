@@ -2,10 +2,13 @@
 
 use App\Models\CreditTransaction;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::registration());
+    Notification::fake();
 });
 
 test('registration screen can be rendered', function () {
@@ -14,7 +17,7 @@ test('registration screen can be rendered', function () {
     $response->assertOk();
 });
 
-test('client can register and is redirected to client dashboard', function () {
+test('client registration sends a verification email and holds them at the notice', function () {
     $response = $this->post(route('register.store'), [
         'name' => 'Jane Client',
         'email' => 'client@example.com',
@@ -24,16 +27,19 @@ test('client can register and is redirected to client dashboard', function () {
     ]);
 
     $response->assertSessionHasNoErrors()
-        ->assertRedirect(route('client.dashboard', absolute: false));
+        ->assertRedirect(route('verification.notice', absolute: false));
 
     $this->assertAuthenticated();
 
     $user = User::where('email', 'client@example.com')->first();
     expect($user->role->value)->toBe('client')
-        ->and($user->credits)->toBe(0);
+        ->and($user->credits)->toBe(0)
+        ->and($user->hasVerifiedEmail())->toBeFalse();
+
+    Notification::assertSentTo($user, VerifyEmail::class);
 });
 
-test('professional can register and is redirected to professional dashboard', function () {
+test('professional registration sends a verification email and holds them at the notice', function () {
     $response = $this->post(route('register.store'), [
         'name' => 'John Pro',
         'email' => 'pro@example.com',
@@ -45,9 +51,14 @@ test('professional can register and is redirected to professional dashboard', fu
     ]);
 
     $response->assertSessionHasNoErrors()
-        ->assertRedirect(route('professional.dashboard', absolute: false));
+        ->assertRedirect(route('verification.notice', absolute: false));
 
     $this->assertAuthenticated();
+
+    Notification::assertSentTo(
+        User::where('email', 'pro@example.com')->first(),
+        VerifyEmail::class,
+    );
 
     $user = User::where('email', 'pro@example.com')->first();
     expect($user->role->value)->toBe('professional')

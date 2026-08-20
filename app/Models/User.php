@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Role;
+use App\Enums\VerificationStatus;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,15 +20,27 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 #[Fillable([
     'name', 'email', 'password', 'role', 'credits',
     'professional_title', 'phone', 'bio', 'portfolio_url', 'skill_tags',
+    'show_hire_count', 'show_engagement_count',
     'avatar_path',
     'company_name', 'company_size', 'company_role', 'company_description', 'company_services',
     'logo_path',
 ])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+
+    /**
+     * Verification columns are deliberately absent from the fillable list: only
+     * VerificationService may write them, and it force fills. That way no
+     * request payload can ever hand someone a verified badge.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'verification_status' => 'unverified',
+    ];
 
     /**
      * Get the attributes that should be cast.
@@ -41,6 +54,11 @@ class User extends Authenticatable implements PasskeyUser
             'password' => 'hashed',
             'role' => Role::class,
             'skill_tags' => 'array',
+            'show_hire_count' => 'boolean',
+            'show_engagement_count' => 'boolean',
+            'verification_status' => VerificationStatus::class,
+            'verification_submitted_at' => 'datetime',
+            'verification_reviewed_at' => 'datetime',
         ];
     }
 
@@ -105,19 +123,89 @@ class User extends Authenticatable implements PasskeyUser
         return $this->credits >= $amount;
     }
 
+    /**
+     * Fields that count toward profile completeness, mapped to the label shown
+     * to the professional when one is missing.
+     *
+     * @var array<string, string>
+     */
+    private const PROFILE_FIELDS = [
+        'name' => 'Your name',
+        'email' => 'Email address',
+        'professional_title' => 'Professional title',
+        'phone' => 'Phone number',
+        'bio' => 'Short bio',
+        'portfolio_url' => 'Portfolio link',
+        'skill_tags' => 'Skills',
+    ];
+
     public function profileCompleteness(): int
     {
-        $fields = [
-            'name', 'email', 'professional_title',
-            'phone', 'bio', 'portfolio_url', 'skill_tags',
-        ];
-        $filled = collect($fields)->filter(fn ($f) => ! empty($this->{$f}))->count();
+        $filled = collect(array_keys(self::PROFILE_FIELDS))
+            ->filter(fn (string $field): bool => ! empty($this->{$field}))
+            ->count();
 
-        return (int) round($filled / count($fields) * 100);
+        return (int) round($filled / count(self::PROFILE_FIELDS) * 100);
+    }
+
+    /**
+     * Human readable labels for the profile fields still to be filled in, so
+     * the profile page can tell a professional exactly what is holding their
+     * alerts back rather than just showing a percentage.
+     *
+     * @return array<int, string>
+     */
+    public function missingProfileFields(): array
+    {
+        return collect(self::PROFILE_FIELDS)
+            ->reject(fn (string $label, string $field): bool => ! empty($this->{$field}))
+            ->values()
+            ->all();
     }
 
     public function isProfileReady(): bool
     {
         return $this->profileCompleteness() >= 70;
+    }
+
+    // ── Track record ───────────────────────────────────────────
+    //
+    // The only trust signal available before reviews exist: what actually
+    // happened on the platform. Counts are derived, never stored, so they
+    // cannot drift from the records they describe.
+
+    /** Briefs where this professional was the one hired. */
+    public function hiresCount(): int
+    {
+        return Brief::where('hired_professional_id', $this->id)->count();
+    }
+
+    /**
+     * Distinct professionals who spent a credit on one of this client's
+     * briefs. Paying to reach someone is the strongest available signal that
+     * a client's briefs are worth answering.
+     */
+    public function engagementCount(): int
+    {
+        return Unlock::whereIn('brief_id', Brief::where('client_id', $this->id)->select('id'))
+            ->distinct('professional_id')
+            ->count('professional_id');
+    }
+
+    // ── Verification ───────────────────────────────────────────
+
+    public function isVerified(): bool
+    {
+        return $this->verification_status === VerificationStatus::Verified;
+    }
+
+    /** The track record this user has chosen to show, or null when hidden. */
+    public function publicTrackRecord(): ?int
+    {
+        if ($this->isProfessional()) {
+            return $this->show_hire_count ? $this->hiresCount() : null;
+        }
+
+        return $this->show_engagement_count ? $this->engagementCount() : null;
     }
 }

@@ -71,16 +71,48 @@ test('skill search also matches by professional title', function () {
         ->assertSee('Chidi Obi');
 });
 
-test('client dashboard shows professionals without a bio', function () {
-    $client = User::factory()->client()->create();
-
+test('the directory lists professionals without a bio', function () {
     User::factory()->professional()->create([
         'name' => 'Ngozi Eze',
         'professional_title' => 'Content Writer',
         'bio' => null,
     ]);
 
-    $this->actingAs($client)
-        ->get(route('client.dashboard'))
-        ->assertSee('Ngozi Eze');
+    $this->get(route('directory'))->assertSee('Ngozi Eze');
+});
+
+test('the directory filters by skill', function () {
+    User::factory()->professional()->create([
+        'name' => 'Adaeze Okoye',
+        'professional_title' => 'Brand Designer',
+        'skill_tags' => ['Brand Identity'],
+    ]);
+
+    User::factory()->professional()->create([
+        'name' => 'Emeka Nwosu',
+        'professional_title' => 'Developer',
+        'skill_tags' => ['Laravel'],
+    ]);
+
+    Livewire::test('pages::directory')
+        ->set('skill', 'Brand Identity')
+        ->assertSee('Adaeze Okoye')
+        ->assertDontSee('Emeka Nwosu');
+});
+
+test('the directory searches by name and title', function () {
+    User::factory()->professional()->create([
+        'name' => 'Chidi Obi',
+        'professional_title' => 'Motion Graphics Artist',
+    ]);
+
+    User::factory()->professional()->create([
+        'name' => 'Fatima Al-Hassan',
+        'professional_title' => 'UX Designer',
+    ]);
+
+    Livewire::test('pages::directory')
+        ->set('search', 'Motion')
+        ->assertSee('Chidi Obi')
+        ->assertDontSee('Fatima Al-Hassan');
 });

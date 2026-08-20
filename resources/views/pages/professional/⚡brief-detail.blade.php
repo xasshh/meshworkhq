@@ -1,145 +1,240 @@
 <?php
 
+use App\Enums\AlertStatus;
+use App\Exceptions\AlreadyUnlockedException;
+use App\Exceptions\BriefNotAvailableException;
+use App\Exceptions\InsufficientCreditsException;
 use App\Models\Alert;
 use App\Models\Brief;
 use App\Models\Unlock;
+use App\Services\UnlockService;
+use Flux\Flux;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Brief Details')] class extends Component {
-
+new #[Title('Brief')] class extends Component
+{
     public Brief $brief;
+
     public ?Alert $alert = null;
+
     public ?Unlock $unlock = null;
 
     public function mount(string $ulid): void
     {
-        $this->brief = Brief::where('ulid', $ulid)
-            ->with(['client'])
-            ->firstOrFail();
+        $this->brief = Brief::where('ulid', $ulid)->with(['client'])->firstOrFail();
 
-        $user = auth()->user();
+        $this->loadProfessionalContext();
 
-        $this->alert = Alert::where('brief_id', $this->brief->id)
-            ->where('professional_id', $user->id)
-            ->first();
-
-        $this->unlock = Unlock::where('brief_id', $this->brief->id)
-            ->where('professional_id', $user->id)
-            ->with('conversation')
-            ->first();
-
-        // Mark alert as viewed.
-        if ($this->alert && $this->alert->status === \App\Enums\AlertStatus::Notified) {
+        if ($this->alert?->status === AlertStatus::Notified) {
             $this->alert->markViewed();
         }
     }
 
-    public function render(): \Illuminate\View\View
+    public function unlockBrief(UnlockService $unlockService): void
     {
-        return view('pages::professional.⚡brief-detail');
+        try {
+            $unlock = $unlockService->unlock(auth()->user(), $this->brief);
+
+            $this->redirectRoute('professional.conversation', ['id' => $unlock->conversation?->id], navigate: true);
+        } catch (AlreadyUnlockedException) {
+            $this->loadProfessionalContext();
+            Flux::toast(variant: 'warning', text: __('You have already unlocked this brief.'));
+        } catch (InsufficientCreditsException $e) {
+            Flux::toast(
+                variant: 'danger',
+                text: __('You need :required credit to unlock this. You have :available.', [
+                    'required' => $e->required,
+                    'available' => $e->available,
+                ]),
+            );
+            $this->redirectRoute('professional.wallet', navigate: true);
+        } catch (BriefNotAvailableException $e) {
+            Flux::toast(variant: 'danger', text: $e->getMessage());
+        }
     }
 
+    private function loadProfessionalContext(): void
+    {
+        $this->alert = Alert::where('brief_id', $this->brief->id)
+            ->where('professional_id', auth()->id())
+            ->first();
+
+        $this->unlock = Unlock::where('brief_id', $this->brief->id)
+            ->where('professional_id', auth()->id())
+            ->with('conversation')
+            ->first();
+    }
 }; ?>
 
-<div class="min-h-screen bg-[--color-emerald-soft]">
-    <div class="max-w-3xl mx-auto px-4 py-8">
+@php
+    $isUnlocked = $unlock !== null;
+    $matchedTags = collect($brief->skill_tags ?? [])
+        ->intersect(collect(auth()->user()->skill_tags ?? []))
+        ->values();
+@endphp
 
-        {{-- Back --}}
-        <a href="{{ route('professional.alerts') }}" class="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 mb-6 transition-colors">
-            <flux:icon.arrow-left class="w-4 h-4" />
-            Back to Alerts
-        </a>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
-        {{-- Brief card --}}
-        <div class="bg-white border border-slate-200 rounded-2xl p-7 mb-6">
-            <div class="flex items-start justify-between gap-4 mb-5">
-                <div>
-                    <h1 class="text-xl font-bold text-[--color-slate-main]" style="font-family: 'DM Serif Display', serif;">
-                        {{ $brief->title }}
-                    </h1>
-                    @if($brief->is_remote)
-                        <span class="inline-block mt-1.5 px-2.5 py-0.5 bg-[--color-emerald-soft] border border-[--color-emerald-border] text-[--color-emerald-deep] rounded-full text-xs font-medium">Remote</span>
-                    @elseif($brief->location)
-                        <span class="inline-block mt-1.5 px-2.5 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs">{{ $brief->location }}</span>
-                    @endif
-                </div>
+    <a href="{{ route('professional.alerts') }}" wire:navigate
+       class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft hover:text-ink transition-colors mb-5">
+        <flux:icon name="arrow-left" variant="micro" />
+        {{ __('Alert feed') }}
+    </a>
 
-                @if($this->unlock)
-                    <span class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-medium flex-shrink-0">Unlocked ✓</span>
-                @elseif($brief->isAvailableForUnlock())
-                    <form action="{{ route('professional.brief.unlock', ['ulid' => $brief->ulid]) }}" method="POST" class="flex-shrink-0">
-                        @csrf
-                        <button type="submit"
-                                class="px-5 py-2.5 bg-[--color-emerald-main] hover:bg-[--color-emerald-deep] text-white font-medium rounded-xl text-sm transition-colors shadow-sm shadow-[--color-emerald-main]/20">
-                            Unlock Brief · 1 Credit
-                        </button>
-                    </form>
-                @else
-                    <span class="px-3 py-1 bg-slate-100 text-slate-400 rounded-xl text-xs">No longer accepting pitches</span>
-                @endif
-            </div>
+    <article class="panel p-6 sm:p-8 grid gap-6">
 
-            {{-- Description only shown after unlock --}}
-            @if($this->unlock)
-                <p class="text-slate-600 text-sm leading-relaxed mb-6">{{ $brief->description }}</p>
+        @if($brief->status->canReceivePitches())
+            <x-wave-rail :brief="$brief" />
+        @endif
 
-                {{-- Client contact info --}}
-                <div class="bg-[--color-emerald-soft] border border-[--color-emerald-border] rounded-xl p-4 mb-5">
-                    <p class="text-xs font-medium text-[--color-emerald-deep] uppercase tracking-wide mb-3">Client Details</p>
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-white border border-[--color-emerald-border] flex items-center justify-center">
-                            <span class="text-sm font-bold text-[--color-emerald-deep]">{{ substr($brief->client->name, 0, 1) }}</span>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-[--color-slate-main]">{{ $brief->client->name }}</p>
-                            @if($brief->client->company_name)
-                                <p class="text-xs text-slate-400">{{ $brief->client->company_name }}</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+        <div class="flex items-start justify-between gap-4 flex-wrap">
+            <h1 class="font-display text-2xl text-ink leading-tight max-w-[30ch]">{{ $brief->title }}</h1>
+
+            @if($isUnlocked)
+                <span class="pill" data-tone="warn">{{ __('Unlocked by you') }}</span>
             @else
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-5">
-                    <p class="text-sm text-slate-400 text-center">
-                        Unlock this brief to see the full description and client contact details.
-                    </p>
-                </div>
+                <span class="pill" data-tone="{{ $brief->status->canReceivePitches() ? 'live' : 'muted' }}">{{ $brief->status->label() }}</span>
             @endif
+        </div>
 
-            {{-- Budget & meta --}}
-            <div class="grid grid-cols-2 gap-4 text-sm border-t border-slate-100 pt-5">
-                @if($brief->budget_max)
-                    <div>
-                        <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Budget Range</p>
-                        <p class="font-semibold text-[--color-slate-main]">₦{{ number_format($brief->budget_min ?? 0) }} – ₦{{ number_format($brief->budget_max) }}</p>
-                    </div>
-                @endif
-                @if($brief->published_at)
-                    <div>
-                        <p class="text-xs text-slate-400 uppercase tracking-wide mb-1">Posted</p>
-                        <p class="font-medium text-[--color-slate-main]">{{ $brief->published_at->diffForHumans() }}</p>
-                    </div>
-                @endif
+        <div class="flex flex-wrap gap-y-4 gap-x-8 py-5 border-y border-line-soft">
+            <div class="fact">
+                <span class="fact-key">{{ __('Budget') }}</span>
+                <span class="fact-value">
+                    @if($brief->budget_min && $brief->budget_max)
+                        &#8358;{{ number_format($brief->budget_min) }} {{ __('to') }} &#8358;{{ number_format($brief->budget_max) }}
+                    @elseif($brief->budget_max)
+                        &#8358;{{ number_format($brief->budget_max) }}
+                    @else
+                        {{ __('Not stated') }}
+                    @endif
+                </span>
             </div>
-
-            @if(!empty($brief->skill_tags))
-                <div class="flex flex-wrap gap-1.5 mt-5 pt-5 border-t border-slate-100">
-                    @foreach($brief->skill_tags as $tag)
-                        <span class="px-2.5 py-1 bg-[--color-emerald-soft] border border-[--color-emerald-border] text-[--color-emerald-deep] rounded-full text-xs">{{ $tag }}</span>
-                    @endforeach
+            <div class="fact">
+                <span class="fact-key">{{ __('Location') }}</span>
+                <span class="fact-value">{{ $brief->is_remote ? __('Remote') : ($brief->location ?: __('Not stated')) }}</span>
+            </div>
+            <div class="fact">
+                <span class="fact-key">{{ __('Posted') }}</span>
+                <span class="fact-value">{{ $brief->published_at?->format('j M Y') ?? __('Not published') }}</span>
+            </div>
+            <div class="fact">
+                <span class="fact-key">{{ __('Unlocked by') }}</span>
+                <span class="fact-value">{{ $brief->total_unlocks }} {{ __('of') }} {{ $brief->waveAudience() }}</span>
+            </div>
+            @if($brief->expires_at)
+                <div class="fact">
+                    <span class="fact-key">{{ __('Expires') }}</span>
+                    <span class="fact-value">{{ $brief->expires_at->format('j M Y') }}</span>
                 </div>
             @endif
         </div>
 
-        {{-- Open conversation CTA if unlocked --}}
-        @if($this->unlock?->conversation)
-            <a href="{{ route('professional.conversation', ['id' => $this->unlock->conversation->id]) }}"
-               class="flex items-center justify-center gap-2 w-full py-3.5 bg-[--color-slate-main] hover:bg-slate-800 text-white font-medium rounded-2xl text-sm transition-colors">
-                <flux:icon.chat-bubble-left-right class="w-4 h-4" />
-                Open Conversation
-            </a>
+        <div class="grid gap-3">
+            <p class="eyebrow">{{ __('The brief') }}</p>
+            <p class="text-sm text-ink leading-relaxed whitespace-pre-line max-w-prose">{{ $brief->description }}</p>
+        </div>
+
+        @if(! empty($brief->skill_tags))
+            <div class="grid gap-3">
+                <p class="eyebrow">{{ __('Skills asked for') }}</p>
+                <div class="flex flex-wrap gap-1.5">
+                    @foreach($brief->skill_tags as $tag)
+                        <span class="tag" @if($matchedTags->contains($tag)) data-hit="true" @endif>{{ $tag }}</span>
+                    @endforeach
+                </div>
+                @if($matchedTags->isNotEmpty())
+                    <p class="text-xs text-ink-faint">
+                        {{ trans_choice('{1}:count skill on your profile matches|[2,*]:count skills on your profile match', $matchedTags->count(), ['count' => $matchedTags->count()]) }}
+                    </p>
+                @endif
+            </div>
         @endif
 
-    </div>
+        {{-- The client record: sealed or open --}}
+        <div class="grid gap-3">
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+                <p class="eyebrow">{{ __('Client') }}</p>
+                <div class="flex items-center gap-2">
+                    <x-verified-badge :user="$brief->client" />
+                    <x-track-record :user="$brief->client" />
+                </div>
+            </div>
+
+            @if($isUnlocked)
+                <div class="seal" data-open="true">
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Name') }}</span>
+                        <span class="seal-value">{{ $brief->client->name }}</span>
+                    </div>
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Email') }}</span>
+                        <span class="seal-value">{{ $brief->client->email }}</span>
+                    </div>
+                    @if($brief->client->phone)
+                        <div class="seal-row">
+                            <span class="seal-key">{{ __('Phone') }}</span>
+                            <span class="seal-value">{{ $brief->client->phone }}</span>
+                        </div>
+                    @endif
+                    @if($brief->client->company_name)
+                        <div class="seal-row">
+                            <span class="seal-key">{{ __('Company') }}</span>
+                            <span class="seal-value">{{ $brief->client->company_name }}</span>
+                        </div>
+                    @endif
+                </div>
+            @else
+                <div class="seal">
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Name') }}</span>
+                        <span class="seal-redact"></span>
+                    </div>
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Email') }}</span>
+                        <span class="seal-redact" data-width="short"></span>
+                    </div>
+                    <div class="seal-row">
+                        <span class="seal-key">{{ __('Company') }}</span>
+                        <span class="seal-redact" data-width="short"></span>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        {{-- Action --}}
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-line-soft">
+            @if($isUnlocked)
+                <span class="text-xs text-ink-faint">
+                    {{ __('Unlocked :when', ['when' => $unlock->unlocked_at?->format('j M Y, H:i') ?? __('recently')]) }}
+                </span>
+                @if($unlock->conversation)
+                    <a href="{{ route('professional.conversation', ['id' => $unlock->conversation->id]) }}" wire:navigate
+                       class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                        {{ $unlock->conversation->messages()->exists() ? __('Open thread') : __('Write your pitch') }}
+                    </a>
+                @endif
+            @else
+                <span class="text-xs text-ink-faint max-w-[38ch]">
+                    {{ __('One credit reveals the client and opens a direct thread. Credits are free while Meshwork HQ is in early access.') }}
+                </span>
+                <button
+                    type="button"
+                    wire:click="unlockBrief"
+                    wire:loading.attr="disabled"
+                    @disabled(! $brief->isAvailableForUnlock())
+                    class="btn-lift inline-flex items-center gap-2.5 text-xs font-semibold px-5 py-2.5 bg-brand-deep text-paper disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                    <span wire:loading.remove wire:target="unlockBrief">
+                        {{ $brief->isAvailableForUnlock() ? __('Unlock this brief') : __('No longer taking pitches') }}
+                    </span>
+                    <span wire:loading wire:target="unlockBrief">{{ __('Unlocking') }}</span>
+                    @if($brief->isAvailableForUnlock())
+                        <span class="font-data text-[11px] font-semibold pl-2.5 border-l border-ink/25">1 {{ __('credit') }}</span>
+                    @endif
+                </button>
+            @endif
+        </div>
+    </article>
 </div>

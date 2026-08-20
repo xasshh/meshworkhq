@@ -13,8 +13,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'role' => RoleMiddleware::class,
+        ]);
+
+        // Paystack posts server to server and carries no session token. It is
+        // authenticated by its HMAC signature instead, which the controller
+        // checks before reading anything from the body.
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/paystack',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

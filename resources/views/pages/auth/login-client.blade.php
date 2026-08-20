@@ -1,13 +1,10 @@
 <x-layouts::auth :title="__('Client Sign In')">
     <div class="flex flex-col gap-6">
 
-        <div>
-            <div class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-3">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-main"></span>
-                Client Portal
-            </div>
-            <h1 class="font-display text-[26px] font-bold text-slate-main tracking-tight">Welcome back</h1>
-            <p class="text-sm text-slate-400 mt-1">Sign in to manage your briefs and review matched professionals.</p>
+        <div class="text-center">
+            <p class="font-data text-[10px] uppercase tracking-[0.18em] text-ink-faint mb-3">Client Portal</p>
+            <h1 class="font-display text-2xl text-ink">Welcome back</h1>
+            <p class="text-sm text-ink-soft mt-2">Sign in to manage your briefs and review matched professionals.</p>
         </div>
 
         <x-auth-session-status :status="session('status')" />
@@ -40,7 +37,7 @@
                 />
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" wire:navigate
-                       class="absolute top-0 end-0 text-xs font-semibold text-emerald-deep hover:text-emerald-main transition-colors">
+                       class="absolute top-0 end-0 text-xs font-semibold text-ink hover:text-brand-deep transition-colors">
                         Forgot password?
                     </a>
                 @endif
@@ -53,11 +50,14 @@
             </flux:button>
         </form>
 
-        <p class="text-sm text-center text-slate-400">
-            New to Meshwork HQ?
-            <a href="{{ route('client.register') }}" wire:navigate class="font-semibold text-emerald-deep hover:text-emerald-main transition-colors">Create client account</a>
-            &nbsp;·&nbsp;
-            <a href="{{ route('professional.login') }}" wire:navigate class="font-semibold text-slate-500 hover:text-slate-700 transition-colors">Professional sign in</a>
-        </p>
+        <div class="grid gap-2 text-center text-sm">
+            <p class="text-ink-faint">
+                New to Meshwork HQ?
+                <a href="{{ route('client.register') }}" wire:navigate class="font-semibold text-ink hover:text-brand-deep transition-colors">Create an account</a>
+            </p>
+            <p>
+                <a href="{{ route('professional.login') }}" wire:navigate class="font-semibold text-ink-soft hover:text-ink transition-colors">Sign in as a professional instead</a>
+            </p>
+        </div>
     </div>
 </x-layouts::auth>

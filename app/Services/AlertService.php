@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\AlertStatus;
+use App\Exceptions\BriefNotAvailableException;
 use App\Jobs\DispatchAlertWaveJob;
 use App\Models\Alert;
 use App\Models\Brief;
@@ -45,6 +46,48 @@ final class AlertService
             DispatchAlertWaveJob::dispatch($brief, $waves[3]->values(), 3)
                 ->delay(now()->addHours(24));
         }
+    }
+
+    /**
+     * Put one professional on a brief by hand, from the public directory.
+     *
+     * The engine normally chooses who hears about a brief, but a client who has
+     * found someone themselves should be able to reach them. It goes through
+     * the same Alert record as an engine match, so the professional still
+     * unlocks to see the client and the credit ledger stays the only path to a
+     * conversation. Idempotent: inviting twice does not alert twice.
+     *
+     * @throws BriefNotAvailableException
+     */
+    public function inviteToBrief(Brief $brief, User $professional): Alert
+    {
+        if (! $brief->isAvailableForUnlock()) {
+            throw new BriefNotAvailableException(
+                "Brief \"{$brief->title}\" is no longer accepting pitches."
+            );
+        }
+
+        $existing = Alert::where('brief_id', $brief->id)
+            ->where('professional_id', $professional->id)
+            ->first();
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $alert = Alert::create([
+            'brief_id' => $brief->id,
+            'professional_id' => $professional->id,
+            'wave' => $brief->currentWave(),
+            'status' => AlertStatus::Notified,
+            'notified_at' => now(),
+        ]);
+
+        $professional->notify(new BriefAlertNotification($alert));
+
+        $brief->increment('total_alerts_sent');
+
+        return $alert;
     }
 
     /**

@@ -1,8 +1,8 @@
 <x-layouts::auth :title="__('Sign in')">
     <div class="flex flex-col gap-7 animate-fade-in-up">
-        <div>
-            <h1 class="font-display text-[26px] font-bold text-slate-main tracking-tight">Welcome back</h1>
-            <p class="text-sm text-slate-400 mt-1.5">Enter your credentials to access your workspace.</p>
+        <div class="text-center">
+            <h1 class="font-display text-2xl text-ink">Welcome back</h1>
+            <p class="text-sm text-ink-soft mt-2">Enter your credentials to access your workspace.</p>
         </div>
 
         <x-auth-session-status :status="session('status')" />
@@ -35,7 +35,7 @@
                 />
                 @if (Route::has('password.request'))
                     <a href="{{ route('password.request') }}" wire:navigate
-                       class="absolute top-0 end-0 text-xs font-semibold text-emerald-deep hover:text-emerald-main transition-colors duration-150">
+                       class="absolute top-0 end-0 text-xs font-semibold text-ink hover:text-brand-deep transition-colors duration-150">
                         {{ __('Forgot password?') }}
                     </a>
                 @endif
@@ -50,14 +50,14 @@
 
         <div class="flex items-center gap-3">
             <div class="h-px flex-1 bg-slate-100"></div>
-            <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">New here?</span>
+            <span class="text-[10px] font-bold text-ink-faint uppercase tracking-widest">New here?</span>
             <div class="h-px flex-1 bg-slate-100"></div>
         </div>
 
-        <p class="text-sm text-center text-slate-400 -mt-2">
+        <p class="text-sm text-center text-ink-faint -mt-2">
             <a href="{{ route('register') }}" wire:navigate
-               class="font-semibold text-emerald-deep hover:text-emerald-main transition-colors duration-150">Create a free account</a>
-            — no commission, no hidden fees.
+               class="font-semibold text-ink hover:text-brand-deep transition-colors duration-150">Create a free account</a>
+            with no commission and no hidden fees.
         </p>
     </div>
 </x-layouts::auth>

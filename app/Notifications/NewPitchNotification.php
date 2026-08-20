@@ -36,7 +36,7 @@ class NewPitchNotification extends Notification implements ShouldQueue
             ->greeting("Hello {$notifiable->name},")
             ->line("{$sender->name} sent you a message about your brief.")
             ->line("**{$brief->title}**")
-            ->action('Read & Reply', $conversationUrl);
+            ->action('Read and reply', $conversationUrl);
     }
 
     /**

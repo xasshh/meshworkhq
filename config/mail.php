@@ -110,6 +110,23 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Logo Shown In Emails
+    |--------------------------------------------------------------------------
+    |
+    | Email clients cannot load images from a private host, so this must be an
+    | absolute, publicly reachable URL. It defaults to APP_URL, which is right
+    | in production but unreachable from an inbox while developing locally, so
+    | MAIL_LOGO_URL can point at a hosted copy instead.
+    |
+    */
+
+    // `?:` rather than a default argument, so an empty MAIL_LOGO_URL still
+    // falls through to APP_URL instead of resolving to an empty string.
+    'logo_url' => env('MAIL_LOGO_URL')
+        ?: rtrim((string) env('APP_URL', 'http://localhost'), '/').'/images/meshwork-lockup.png',
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),

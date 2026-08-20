@@ -7,6 +7,7 @@ use App\Events\BriefPublished;
 use App\Exceptions\BriefNotAvailableException;
 use App\Models\Brief;
 use App\Models\User;
+use App\Notifications\HiredNotification;
 
 final class BriefService
 {
@@ -79,7 +80,9 @@ final class BriefService
             'hired_professional_id' => $professional->id,
         ]);
 
-        return $brief->refresh();
+        $professional->notify(new HiredNotification($brief->refresh()->load('client')));
+
+        return $brief;
     }
 
     /**

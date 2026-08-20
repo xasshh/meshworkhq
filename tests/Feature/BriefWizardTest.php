@@ -33,12 +33,12 @@ test('client can publish a brief through the wizard and matched professionals ar
         ->test('pages::client.brief-wizard')
         ->set('title', 'Brand Identity for a fintech startup')
         ->set('description', 'We need a full brand identity package including logo, colors, and guidelines.')
-        ->set('budget', '250000')
+        ->set('budgetMax', '250000')
         ->call('submitForm')
         ->assertSet('step', 'calibrating')
         ->assertSet('selectedTags', ['Brand Identity'])
         ->call('confirmTags')
-        ->assertSet('step', 'radar');
+        ->assertSet('step', 'live');
 
     $brief = Brief::first();
 
@@ -62,7 +62,7 @@ test('wizard requires at least one skill tag before publishing', function () {
         ->test('pages::client.brief-wizard')
         ->set('title', 'Some project title')
         ->set('description', 'A description that is long enough to pass validation rules.')
-        ->set('budget', '50000')
+        ->set('budgetMax', '50000')
         ->call('submitForm')
         ->set('selectedTags', [])
         ->call('confirmTags')
@@ -82,7 +82,7 @@ test('wizard suggests tags from the skill taxonomy by keyword match', function (
         ->test('pages::client.brief-wizard')
         ->set('title', 'Web development for our store')
         ->set('description', 'Need an online shop built with checkout, no photography required for now.')
-        ->set('budget', '500000')
+        ->set('budgetMax', '500000')
         ->call('submitForm')
         ->assertSet('selectedTags', function (array $tags) {
             return count($tags) === 2

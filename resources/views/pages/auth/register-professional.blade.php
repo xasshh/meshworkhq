@@ -14,13 +14,10 @@
              get skillsJson() { return JSON.stringify(this.skills); }
          }">
 
-        <div>
-            <div class="inline-flex items-center gap-2 bg-emerald-soft border border-emerald-border text-emerald-deep text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-3">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-main"></span>
-                Professional Account
-            </div>
-            <h1 class="font-display text-[26px] font-bold text-slate-main tracking-tight">Create your professional profile</h1>
-            <p class="text-sm text-slate-400 mt-1">Receive matched client briefs, pitch directly, no commission taken.</p>
+        <div class="text-center">
+            <p class="font-data text-[10px] uppercase tracking-[0.18em] text-ink-faint mb-3">Professional Account</p>
+            <h1 class="font-display text-2xl text-ink">Create your professional profile</h1>
+            <p class="text-sm text-ink-soft mt-2">Receive matched client briefs, pitch directly, no commission taken.</p>
         </div>
 
         <x-auth-session-status :status="session('status')" />
@@ -74,7 +71,7 @@
                         <button
                             type="button"
                             @click="addSkill('{{ $cat }}')"
-                            :class="skills.includes('{{ $cat }}') ? 'bg-emerald-main text-white border-emerald-main' : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-main hover:text-emerald-deep'"
+                            :class="skills.includes('{{ $cat }}') ? 'bg-ink text-white border-ink' : 'bg-white text-ink-soft border-line hover:border-ink hover:text-ink'"
                             class="text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-colors"
                         >{{ $cat }}</button>
                     @endforeach
@@ -87,10 +84,10 @@
                         x-model="skillInput"
                         @keydown.enter.prevent="addSkill(skillInput)"
                         placeholder="Add a custom skill..."
-                        class="flex-1 px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-slate-main placeholder-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-main/30 focus:border-emerald-main transition"
+                        class="flex-1 px-3 py-2  border border-line bg-chalk-soft text-ink placeholder-ink-faint text-xs focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink transition"
                     />
                     <button type="button" @click="addSkill(skillInput)"
-                        class="px-3 py-2 bg-slate-main text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition">
+                        class="px-3 py-2 bg-ink text-white text-xs font-semibold  hover:bg-ink-deep transition">
                         Add
                     </button>
                 </div>
@@ -98,7 +95,7 @@
                 {{-- Selected tags display --}}
                 <div class="flex flex-wrap gap-1.5 mt-2 min-h-6">
                     <template x-for="(skill, i) in skills" :key="i">
-                        <span class="inline-flex items-center gap-1 bg-slate-main text-white text-[11px] font-medium px-2.5 py-1 rounded-full">
+                        <span class="inline-flex items-center gap-1 bg-ink text-white text-[11px] font-medium px-2.5 py-1 rounded-full">
                             <span x-text="skill"></span>
                             <button type="button" @click="removeSkill(i)" class="text-white/50 hover:text-white leading-none ml-0.5">×</button>
                         </span>
@@ -137,11 +134,11 @@
             </flux:button>
         </form>
 
-        <p class="text-sm text-center text-slate-400">
+        <p class="text-sm text-center text-ink-faint">
             Already have an account?
-            <a href="{{ route('professional.login') }}" wire:navigate class="font-semibold text-emerald-deep hover:text-emerald-main transition-colors">Sign in</a>
+            <a href="{{ route('professional.login') }}" wire:navigate class="font-semibold text-ink hover:text-brand-deep transition-colors">Sign in</a>
             &nbsp;·&nbsp;
-            <a href="{{ route('client.register') }}" wire:navigate class="font-semibold text-slate-500 hover:text-slate-700 transition-colors">Join as client</a>
+            <a href="{{ route('client.register') }}" wire:navigate class="font-semibold text-ink-soft hover:text-ink transition-colors">Join as client</a>
         </p>
     </div>
 </x-layouts::auth>

@@ -1,116 +1,151 @@
+@php
+    $user = auth()->user();
+    $isPro = $user->isProfessional();
+
+    $unreadAlerts = $isPro
+        ? \App\Models\Alert::where('professional_id', $user->id)
+            ->where('status', \App\Enums\AlertStatus::Notified)
+            ->count()
+        : 0;
+
+    $unreadMessages = \App\Models\Message::whereHas('conversation', function ($q) use ($user, $isPro) {
+        $q->where($isPro ? 'professional_id' : 'client_id', $user->id);
+    })
+        ->where('sender_id', '!=', $user->id)
+        ->whereNull('read_at')
+        ->count();
+@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-light-canvas antialiased font-sans">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-slate-200/80 bg-white">
-            <flux:sidebar.header class="border-b border-slate-100 pb-4">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 group" wire:navigate>
-                    <div class="w-8 h-8 bg-emerald-main rounded-lg flex items-center justify-center shrink-0 shadow-md shadow-emerald-main/25 group-hover:shadow-emerald-main/40 transition-shadow duration-300">
-                        <span class="text-white font-display font-bold text-base leading-none">M</span>
-                    </div>
-                    <span class="font-display font-semibold text-slate-main text-sm tracking-tight">Meshwork <span class="text-emerald-main">HQ</span></span>
+    <body class="min-h-screen bg-paper text-ink antialiased font-sans">
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-line bg-paper">
+
+            <flux:sidebar.header class="border-b border-line-soft pb-4">
+                <a href="{{ route('dashboard') }}" wire:navigate class="shrink-0" aria-label="{{ __('Meshwork HQ') }}">
+                    <img src="{{ asset('images/meshwork-lockup.png') }}" alt="Meshwork HQ"
+                         width="500" height="109" class="h-7 w-auto" />
                 </a>
                 <div class="ml-auto hidden lg:block">
                     @livewire('notification-bell')
                 </div>
-                <flux:sidebar.collapse class="lg:hidden ml-auto text-slate-400 hover:text-slate-600 transition-colors" />
+                <flux:sidebar.collapse class="lg:hidden ml-auto text-ink-faint hover:text-ink transition-colors" />
             </flux:sidebar.header>
 
-            <flux:sidebar.nav class="pt-3">
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item
-                        icon="home"
-                        :href="route('dashboard')"
-                        :current="request()->routeIs('dashboard')"
-                        wire:navigate
-                        class="text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all duration-150"
-                    >
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+            <flux:sidebar.nav class="pt-4">
 
-                @if(auth()->user()->isClient())
-                    <flux:sidebar.group :heading="__('Actions')" class="grid">
-                        <div class="px-1 mt-1">
-                            <a href="{{ route('client.brief.create') }}" wire:navigate
-                               class="btn-lift flex items-center justify-center gap-2 w-full bg-emerald-main text-white font-semibold text-sm py-2.5 px-4 rounded-xl hover:bg-emerald-deep transition-colors shadow-sm shadow-emerald-main/20">
-                                <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                </svg>
-                                {{ __('Post a Brief') }}
-                            </a>
-                        </div>
+                @if($isPro)
+                    <flux:sidebar.group :heading="__('Work')" class="grid">
+                        <x-nav-link :href="route('professional.alerts')" :current="request()->routeIs('professional.alerts')" icon="bell-alert" :badge="$unreadAlerts">
+                            {{ __('Alert feed') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('professional.dashboard')" :current="request()->routeIs('professional.dashboard')" icon="home">
+                            {{ __('Overview') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('professional.pitches')" :current="request()->routeIs('professional.pitches')" icon="paper-airplane">
+                            {{ __('My pitches') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('professional.messages')" :current="request()->routeIs('professional.messages', 'professional.conversation')" icon="chat-bubble-left-right" :badge="$unreadMessages">
+                            {{ __('Messages') }}
+                        </x-nav-link>
                     </flux:sidebar.group>
-                @endif
 
-                @if(auth()->user()->isProfessional())
                     <flux:sidebar.group :heading="__('Account')" class="grid">
-                        <div class="mx-1 mt-1 rounded-xl bg-slate-main p-4 relative overflow-hidden">
-                            {{-- Subtle blue glow inside the dark card --}}
-                            <div class="absolute inset-0 opacity-30" style="background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(27, 80, 212, 0.5) 0%, transparent 70%);"></div>
-                            <div class="relative z-10">
-                                <p class="text-[10px] text-white/40 uppercase tracking-widest font-semibold mb-1.5">{{ __('Credits') }}</p>
-                                <div class="flex items-end gap-1.5 mb-2.5">
-                                    <p class="font-display text-white font-bold text-3xl leading-none">
-                                        {{ number_format(auth()->user()->credits) }}
-                                    </p>
-                                    <span class="text-emerald-main text-xs font-semibold pb-0.5">{{ __('available') }}</span>
-                                </div>
-                                <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                                    <div class="h-full bg-emerald-main rounded-full transition-all duration-700"
-                                         style="width: {{ min(100, auth()->user()->credits * 10) }}%"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <x-nav-link :href="route('professional.profile')" :current="request()->routeIs('professional.profile')" icon="user-circle">
+                            {{ __('Profile') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('professional.wallet')" :current="request()->routeIs('professional.wallet')" icon="wallet">
+                            {{ __('Wallet') }}
+                        </x-nav-link>
                     </flux:sidebar.group>
+
+                    {{-- Credit meter. Countable ticks, not a progress bar. --}}
+                    <div class="mx-1 mt-3 bg-ink p-4">
+                        <p class="eyebrow text-paper/40 mb-2">{{ __('Credits') }}</p>
+                        <div class="flex items-end gap-2 mb-3">
+                            <span class="font-data text-3xl font-medium text-paper leading-none tracking-tight">{{ number_format($user->credits) }}</span>
+                            <span class="text-[11px] text-paper/50 pb-0.5">{{ __('available') }}</span>
+                        </div>
+                        <div class="grid grid-flow-col gap-[3px] mb-3">
+                            @for($i = 1; $i <= 10; $i++)
+                                <span class="h-3 {{ $i <= min(10, $user->credits) ? 'bg-brand' : 'bg-paper/15' }}"></span>
+                            @endfor
+                        </div>
+                        <a href="{{ route('professional.wallet') }}" wire:navigate
+                           class="block text-center text-[11px] font-semibold text-paper bg-brand-deep py-1.5 btn-lift">
+                            {{ __('Buy credits') }}
+                        </a>
+                    </div>
+                @else
+                    <flux:sidebar.group :heading="__('Work')" class="grid">
+                        <x-nav-link :href="route('client.dashboard')" :current="request()->routeIs('client.dashboard')" icon="home">
+                            {{ __('Overview') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('client.briefs')" :current="request()->routeIs('client.briefs', 'client.brief.detail')" icon="document-text">
+                            {{ __('My briefs') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('client.messages')" :current="request()->routeIs('client.messages', 'client.conversation')" icon="chat-bubble-left-right" :badge="$unreadMessages">
+                            {{ __('Messages') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('directory')" :current="request()->routeIs('directory')" icon="users">
+                            {{ __('Find professionals') }}
+                        </x-nav-link>
+                    </flux:sidebar.group>
+
+                    <flux:sidebar.group :heading="__('Account')" class="grid">
+                        <x-nav-link :href="route('client.profile')" :current="request()->routeIs('client.profile')" icon="building-office">
+                            {{ __('Company profile') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('client.verification')" :current="request()->routeIs('client.verification')" icon="shield-check">
+                            {{ __('Verification') }}
+                        </x-nav-link>
+                    </flux:sidebar.group>
+
+                    <div class="px-1 mt-3">
+                        <a href="{{ route('client.brief.create') }}" wire:navigate
+                           class="btn-lift flex items-center justify-center gap-2 w-full bg-ink text-paper font-semibold text-sm py-2.5 px-4">
+                            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            {{ __('Post a brief') }}
+                        </a>
+                    </div>
                 @endif
+
             </flux:sidebar.nav>
 
             <flux:spacer />
 
-            <flux:sidebar.nav class="pb-2 border-t border-slate-100 pt-3">
-                <flux:sidebar.item
-                    icon="cog-6-tooth"
-                    :href="route('profile.edit')"
-                    wire:navigate
-                    class="text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all duration-150"
-                >
+            <flux:sidebar.nav class="pb-2 border-t border-line-soft pt-3">
+                <x-nav-link :href="route('profile.edit')" :current="request()->routeIs('profile.edit', 'appearance.edit', 'security.edit')" icon="cog-6-tooth">
                     {{ __('Settings') }}
-                </flux:sidebar.item>
+                </x-nav-link>
             </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
 
-        <!-- Mobile Header -->
-        <flux:header class="lg:hidden border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-            <flux:sidebar.toggle class="lg:hidden text-slate-500 hover:text-slate-700 transition-colors" icon="bars-2" inset="left" />
-            <div class="flex items-center gap-2 mx-auto">
-                <div class="w-7 h-7 bg-emerald-main rounded-lg flex items-center justify-center shadow-sm shadow-emerald-main/25">
-                    <span class="text-white font-display font-bold text-sm leading-none">M</span>
-                </div>
-                <span class="font-display font-semibold text-slate-main text-sm tracking-tight">Meshwork <span class="text-emerald-main">HQ</span></span>
-            </div>
+        {{-- Mobile header --}}
+        <flux:header class="lg:hidden border-b border-line bg-paper">
+            <flux:sidebar.toggle class="lg:hidden text-ink-soft hover:text-ink transition-colors" icon="bars-2" inset="left" />
+            <a href="{{ route('dashboard') }}" wire:navigate class="mx-auto" aria-label="{{ __('Meshwork HQ') }}">
+                <img src="{{ asset('images/meshwork-lockup.png') }}" alt="Meshwork HQ"
+                     width="500" height="109" class="h-7 w-auto" />
+            </a>
             @livewire('notification-bell')
             <flux:dropdown position="top" align="end">
-                <flux:profile
-                    :initials="auth()->user()->initials()"
-                    icon-trailing="chevron-down"
-                />
+                <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
                 <flux:menu>
-                    <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" />
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
-                                </div>
-                            </div>
+                    <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                        <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" />
+                        <div class="grid flex-1 text-start text-sm leading-tight">
+                            <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
+                            <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
                         </div>
-                    </flux:menu.radio.group>
+                    </div>
                     <flux:menu.separator />
                     <flux:menu.radio.group>
                         <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}</flux:menu.item>

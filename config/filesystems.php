@@ -41,7 +41,11 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            // Root relative on purpose. Building this from APP_URL points every
+            // uploaded image at one fixed host, which breaks avatars and logos
+            // on localhost, on a tunnel, and anywhere the app is reached by a
+            // different domain than APP_URL happens to name.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

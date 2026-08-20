@@ -35,7 +35,7 @@ class BriefUnlockedNotification extends Notification implements ShouldQueue
             ->greeting("Hello {$notifiable->name},")
             ->line("{$professional->name} has unlocked and is pitching on your brief.")
             ->line("**{$brief->title}**")
-            ->action('View Pitch & Start Conversation', $conversationUrl)
+            ->action('Open the conversation', $conversationUrl)
             ->line('Reply directly through the platform to discuss further.');
     }
 

@@ -123,7 +123,7 @@ final class CreditService
             amount: 3,
             type: CreditTransactionType::Bonus,
             reference: 'welcome-bonus-'.$user->id,
-            description: 'Welcome bonus — 3 free unlocks',
+            description: 'Welcome bonus, 3 free unlocks',
             expiresAt: now()->addDays(30),
         );
     }

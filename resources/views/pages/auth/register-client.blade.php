@@ -1,13 +1,10 @@
 <x-layouts::auth :title="__('Join as a Hiring Client')">
     <div class="flex flex-col gap-5">
 
-        <div>
-            <div class="inline-flex items-center gap-2 bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-3">
-                <span class="w-1.5 h-1.5 rounded-full bg-slate-main"></span>
-                Client Account
-            </div>
-            <h1 class="font-display text-[26px] font-bold text-slate-main tracking-tight">Find and hire top professionals</h1>
-            <p class="text-sm text-slate-400 mt-1">Post briefs, get matched, hire directly — no platform commission.</p>
+        <div class="text-center">
+            <p class="font-data text-[10px] uppercase tracking-[0.18em] text-ink-faint mb-3">Client Account</p>
+            <h1 class="font-display text-2xl text-ink">Find and hire top professionals</h1>
+            <p class="text-sm text-ink-soft mt-2">Post briefs, get matched, hire directly. No platform commission.</p>
         </div>
 
         <x-auth-session-status :status="session('status')" />
@@ -38,8 +35,8 @@
             />
 
             {{-- Company / Business Details --}}
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col gap-3">
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Company / Business Details</p>
+            <div class="bg-chalk-soft border border-line  p-4 flex flex-col gap-3">
+                <p class="text-xs font-bold text-ink-faint uppercase tracking-wider">Company / Business Details</p>
 
                 <flux:input
                     name="company_name"
@@ -53,12 +50,12 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Team size</label>
                         <select name="company_size"
-                            class="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-main text-sm focus:outline-none focus:ring-2 focus:ring-emerald-main/30 focus:border-emerald-main transition appearance-none">
+                            class="w-full px-3 py-2.5  border border-line bg-white text-ink text-sm focus:outline-none focus:ring-2 focus:ring-ink/20 focus:border-ink transition appearance-none">
                             <option value="">Select size</option>
                             <option value="solo" @selected(old('company_size') === 'solo')>Just me</option>
-                            <option value="2-10" @selected(old('company_size') === '2-10')>2–10 people</option>
-                            <option value="11-50" @selected(old('company_size') === '11-50')>11–50 people</option>
-                            <option value="51-200" @selected(old('company_size') === '51-200')>51–200 people</option>
+                            <option value="2-10" @selected(old('company_size') === '2-10')>2 to 10 people</option>
+                            <option value="11-50" @selected(old('company_size') === '11-50')>11 to 50 people</option>
+                            <option value="51-200" @selected(old('company_size') === '51-200')>51 to 200 people</option>
                             <option value="200+" @selected(old('company_size') === '200+')>200+ people</option>
                         </select>
                     </div>
@@ -100,11 +97,11 @@
             </flux:button>
         </form>
 
-        <p class="text-sm text-center text-slate-400">
+        <p class="text-sm text-center text-ink-faint">
             Already have an account?
-            <a href="{{ route('client.login') }}" wire:navigate class="font-semibold text-emerald-deep hover:text-emerald-main transition-colors">Sign in</a>
+            <a href="{{ route('client.login') }}" wire:navigate class="font-semibold text-ink hover:text-brand-deep transition-colors">Sign in</a>
             &nbsp;·&nbsp;
-            <a href="{{ route('professional.register') }}" wire:navigate class="font-semibold text-slate-500 hover:text-slate-700 transition-colors">Join as professional</a>
+            <a href="{{ route('professional.register') }}" wire:navigate class="font-semibold text-ink-soft hover:text-ink transition-colors">Join as professional</a>
         </p>
     </div>
 </x-layouts::auth>
