@@ -1,5 +1,27 @@
 <?php
 
+/*
+ * Where the public disk keeps uploaded avatars and logos.
+ *
+ * Normally that is storage/app/public, reached from the web through the
+ * public/storage symlink. Some shared hosts disable PHP's symlink(), so the
+ * link cannot be created at all; there, point this at a real directory inside
+ * public/ instead, relative to the project root:
+ *
+ *     FILESYSTEM_PUBLIC_ROOT=public/storage
+ *
+ * Leave it unset anywhere the symlink works, and on Fly in particular, where
+ * storage/app lives on the /data volume and a directory under public/ would be
+ * destroyed by the next deploy.
+ */
+$publicDiskRoot = env('FILESYSTEM_PUBLIC_ROOT');
+
+$publicDiskRoot = match (true) {
+    empty($publicDiskRoot) => storage_path('app/public'),
+    str_starts_with($publicDiskRoot, '/') => $publicDiskRoot,
+    default => base_path($publicDiskRoot),
+};
+
 return [
 
     /*
@@ -40,7 +62,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
+            'root' => $publicDiskRoot,
             // Root relative on purpose. Building this from APP_URL points every
             // uploaded image at one fixed host, which breaks avatars and logos
             // on localhost, on a tunnel, and anywhere the app is reached by a
