@@ -69,19 +69,19 @@
                     </flux:sidebar.group>
 
                     {{-- Credit meter. Countable ticks, not a progress bar. --}}
-                    <div class="mx-1 mt-3 bg-ink p-4">
+                    <div class="mx-1 mt-3 bg-ink rounded-xl p-4 shadow-[var(--shadow-soft)]">
                         <p class="eyebrow text-paper/40 mb-2">{{ __('Credits') }}</p>
                         <div class="flex items-end gap-2 mb-3">
-                            <span class="font-data text-3xl font-medium text-paper leading-none tracking-tight">{{ number_format($user->credits) }}</span>
+                            <span class="font-display text-3xl font-semibold text-paper leading-none tracking-tight">{{ number_format($user->credits) }}</span>
                             <span class="text-[11px] text-paper/50 pb-0.5">{{ __('available') }}</span>
                         </div>
                         <div class="grid grid-flow-col gap-[3px] mb-3">
                             @for($i = 1; $i <= 10; $i++)
-                                <span class="h-3 {{ $i <= min(10, $user->credits) ? 'bg-brand' : 'bg-paper/15' }}"></span>
+                                <span class="h-3 rounded-sm {{ $i <= min(10, $user->credits) ? 'bg-ember' : 'bg-paper/15' }}"></span>
                             @endfor
                         </div>
                         <a href="{{ route('professional.wallet') }}" wire:navigate
-                           class="block text-center text-[11px] font-semibold text-paper bg-brand-deep py-1.5 btn-lift">
+                           class="block text-center text-[11px] font-semibold text-navy-deep bg-ember-lit rounded-full py-2 btn-lift">
                             {{ __('Buy credits') }}
                         </a>
                     </div>

@@ -174,7 +174,7 @@ new #[Layout('layouts::marketing')] #[Title('Find professionals')] class extends
                             </div>
                         @endif
 
-                        <span class="font-data text-[10px] uppercase tracking-[0.14em] text-brand-deep mt-1">
+                        <span class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep mt-1">
                             {{ __('View profile') }}
                         </span>
                     </a>

@@ -18,43 +18,66 @@
  * accent so a status never competes with a call to action.
  */
 @theme {
-    --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-    --font-display: 'Oswald', 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-display: 'Outfit', 'Manrope', ui-sans-serif, system-ui, sans-serif;
     --font-data: 'Martian Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* Ink: the near black of the logo wordmark */
-    --color-ink: #1D1F20;
-    --color-ink-deep: #101112;
-    --color-ink-soft: #55585C;
-    --color-ink-faint: #8A8D91;
+    /* Ink. Warmed very slightly off pure neutral so it sits with the accents
+       rather than against them. */
+    --color-ink: #1C1D22;
+    --color-ink-deep: #0F1014;
+    --color-ink-soft: #565A63;
+    --color-ink-faint: #6B7079;
 
     /* Navy: the ground of every dark section */
-    --color-navy: #1E2A38;
-    --color-navy-deep: #16202B;
-    --color-navy-raised: #26364A;
+    --color-navy: #1B2432;
+    --color-navy-deep: #141B26;
+    --color-navy-raised: #26334A;
 
-    /* Chalk: the ground, the logo's own background colour */
-    --color-chalk: #F2F2F3;
-    --color-chalk-soft: #FAFAFB;
+    /* Ground */
+    --color-chalk: #F3F4F6;
+    --color-chalk-soft: #FAFAFC;
     --color-paper: #FFFFFF;
-    --color-line: #DCDCDE;
-    --color-line-soft: #E8E8EA;
+    --color-line: #E2E4E9;
+    --color-line-soft: #EDEFF3;
 
-    /* Brand blue, taken from the logo. The single accent. */
-    --color-brand: #5980A6;
-    --color-brand-deep: #3F5F80;
-    --color-brand-lit: #7A9CBD;
-    --color-brand-wash: #EDF2F7;
+    /* Brand blue. Navigation and action: things you click to go somewhere. */
+    --color-brand: #3F7DD4;
+    --color-brand-deep: #2C5FA8;
+    --color-brand-lit: #6FA0E6;
+    --color-brand-wash: #EDF3FD;
+
+    /* Ember. Money, momentum and urgency: credits, unlocks, waves opening.
+       The second accent, kept for things that move rather than things you
+       merely navigate to. */
+    --color-ember: #E08A2B;
+    --color-ember-deep: #A05F17;
+    --color-ember-lit: #F4AD5E;
+    --color-ember-wash: #FDF3E6;
 
     /* Semantic */
-    --color-live: #1B6B51;
-    --color-live-wash: #E4F1EC;
-    --color-critical: #A32118;
-    --color-critical-wash: #FCEDEC;
+    --color-live: #117B61;
+    --color-live-wash: #E6F5F0;
+    --color-critical: #C0362B;
+    --color-critical-wash: #FDEEEC;
+
+    /* Corner radius. Softened deliberately: the square edges read as severe on
+       a screen people work in every day. */
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-pill: 999px;
+
+    /* Elevation. Low spread, low opacity: depth you feel rather than notice. */
+    --shadow-soft: 0 1px 2px rgb(16 18 24 / 0.04), 0 2px 8px rgb(16 18 24 / 0.04);
+    --shadow-lift: 0 2px 4px rgb(16 18 24 / 0.05), 0 8px 20px rgb(16 18 24 / 0.07);
+    --shadow-deep: 0 4px 8px rgb(16 18 24 / 0.06), 0 16px 40px rgb(16 18 24 / 0.10);
 
     /* Flux accent */
-    --color-accent: #3F5F80;
-    --color-accent-content: #3F5F80;
+    --color-accent: #2C5FA8;
+    --color-accent-content: #2C5FA8;
     --color-accent-foreground: #FFFFFF;
 
     /* Animation references */
@@ -243,22 +266,22 @@ select:focus[data-flux-control] {
     }
 
     .wave-seg {
-        height: 4px;
-        border-radius: 1px;
+        height: 5px;
+        border-radius: var(--radius-pill);
         background: var(--color-line);
         position: relative;
         overflow: hidden;
     }
 
     .wave-seg[data-state='past'] {
-        background: var(--color-ink-faint);
+        background: color-mix(in oklab, var(--color-ember) 45%, var(--color-line));
     }
 
     .wave-seg[data-state='live']::after {
         content: '';
         position: absolute;
         inset: 0;
-        background: var(--color-brand);
+        background: linear-gradient(90deg, var(--color-ember) 0%, var(--color-ember-lit) 100%);
         transform-origin: left;
         transform: scaleX(var(--wave-progress, 0.5));
         animation: wave-fill 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -295,6 +318,7 @@ select:focus[data-flux-control] {
         padding: 0.875rem 1rem;
         background: var(--color-chalk-soft);
         border: 1px dashed var(--color-line);
+        border-radius: var(--radius-md);
     }
 
     .seal[data-open='true'] {
@@ -353,8 +377,9 @@ select:focus[data-flux-control] {
         font-weight: 500;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        padding: 0.3125rem 0.5625rem;
+        padding: 0.3125rem 0.625rem;
         border: 1px solid var(--color-line);
+        border-radius: var(--radius-pill);
         background: var(--color-chalk-soft);
         color: var(--color-ink-soft);
         white-space: nowrap;
@@ -388,6 +413,12 @@ select:focus[data-flux-control] {
         border-color: color-mix(in oklab, var(--color-critical) 35%, transparent);
     }
 
+    .pill[data-tone='ember'] {
+        color: var(--color-ember-deep);
+        background: var(--color-ember-wash);
+        border-color: color-mix(in oklab, var(--color-ember) 40%, transparent);
+    }
+
     .pill[data-tone='muted'] {
         color: var(--color-ink-faint);
     }
@@ -417,11 +448,13 @@ select:focus[data-flux-control] {
     /* Skill tag */
     .tag {
         font-size: 0.6875rem;
-        padding: 0.25rem 0.5rem;
+        padding: 0.25rem 0.625rem;
         border: 1px solid var(--color-line);
+        border-radius: var(--radius-pill);
         background: var(--color-chalk-soft);
         color: var(--color-ink-soft);
         white-space: nowrap;
+        max-width: 100%;
     }
 
     .tag[data-hit='true'] {
@@ -435,15 +468,207 @@ select:focus[data-flux-control] {
     .panel {
         background: var(--color-paper);
         border: 1px solid var(--color-line);
-        box-shadow: 0 1px 2px rgba(29, 31, 32, 0.05), 0 8px 24px -12px rgba(29, 31, 32, 0.16);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+    }
+
+    /* A panel that leads a page or a section: slightly more lift. */
+    .panel-raised {
+        background: var(--color-paper);
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-lift);
+    }
+
+    /*
+     * A tinted panel. The accent names what the section is about rather than
+     * decorating it: brand for things you act on, ember for money and momentum.
+     */
+    .panel-accent {
+        border-radius: var(--radius-lg);
+        border: 1px solid color-mix(in oklab, var(--color-brand) 22%, transparent);
+        background: linear-gradient(180deg, var(--color-brand-wash) 0%, var(--color-paper) 70%);
+    }
+
+    .panel-accent[data-tone='ember'] {
+        border-color: color-mix(in oklab, var(--color-ember) 28%, transparent);
+        background: linear-gradient(180deg, var(--color-ember-wash) 0%, var(--color-paper) 70%);
+    }
+
+    /*
+     * Stat tile. The dashboard's unit of "here is where you stand". Hoverable
+     * when it links somewhere, tinted when it carries the accent meaning.
+     */
+    .stat {
+        display: grid;
+        gap: 0.5rem;
+        padding: 1.125rem 1.25rem;
+        background: var(--color-paper);
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+                    border-color 0.2s ease;
+    }
+
+    a.stat:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lift);
+        border-color: color-mix(in oklab, var(--color-brand) 35%, var(--color-line));
+    }
+
+    a.stat[data-tone='ember']:hover {
+        border-color: color-mix(in oklab, var(--color-ember) 45%, var(--color-line));
+    }
+
+    .stat-value {
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        color: var(--color-ink);
+    }
+
+    .stat[data-tone='brand'] .stat-value {
+        color: var(--color-brand-deep);
+    }
+
+    .stat[data-tone='ember'] .stat-value {
+        color: var(--color-ember-deep);
+    }
+
+    /*
+     * The container an icon sits in. Tinting this rather than the icon keeps
+     * the stroke weight even across every size.
+     */
+    .icon-badge {
+        display: grid;
+        place-items: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        flex: none;
+        border-radius: var(--radius-md);
+        background: var(--color-chalk);
+        color: var(--color-ink-soft);
+    }
+
+    .icon-badge[data-tone='brand'] {
+        background: var(--color-brand-wash);
+        color: var(--color-brand-deep);
+    }
+
+    .icon-badge[data-tone='ember'] {
+        background: var(--color-ember-wash);
+        color: var(--color-ember-deep);
+    }
+
+    .icon-badge[data-tone='live'] {
+        background: var(--color-live-wash);
+        color: var(--color-live);
+    }
+
+    .icon-badge[data-size='lg'] {
+        width: 3rem;
+        height: 3rem;
+        border-radius: var(--radius-lg);
+    }
+
+    /*
+     * Buttons. Blue is where you go, ember is where you spend, ink is the
+     * plain commit. Kept as classes so the three never drift apart.
+     */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.125rem;
+        border-radius: var(--radius-pill);
+        font-weight: 600;
+        font-size: 0.8125rem;
+        line-height: 1.2;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+                    box-shadow 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+                    background-color 0.16s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lift);
+    }
+
+    .btn:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .btn-primary {
+        background: var(--color-brand-deep);
+        color: var(--color-paper);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        background: color-mix(in oklab, var(--color-brand-deep) 88%, black);
+    }
+
+    .btn-ember {
+        background: var(--color-ember-deep);
+        color: var(--color-paper);
+    }
+
+    .btn-ember:hover:not(:disabled) {
+        background: color-mix(in oklab, var(--color-ember-deep) 88%, black);
+    }
+
+    .btn-ink {
+        background: var(--color-ink);
+        color: var(--color-paper);
+    }
+
+    .btn-ghost {
+        background: var(--color-paper);
+        border-color: var(--color-line);
+        color: var(--color-ink);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+        border-color: var(--color-brand);
+        color: var(--color-brand-deep);
+    }
+
+    .btn-sm {
+        padding: 0.4375rem 0.875rem;
+        font-size: 0.75rem;
+    }
+
+    /* Nothing here yet, said without making it feel like a dead end. */
+    .empty-state {
+        display: grid;
+        justify-items: center;
+        gap: 0.75rem;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        border: 1px dashed var(--color-line);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, var(--color-chalk-soft) 0%, var(--color-paper) 60%);
     }
 
     /* Section eyebrow */
     .eyebrow {
-        font-family: var(--font-data);
-        font-size: 0.625rem;
-        font-weight: 500;
-        letter-spacing: 0.16em;
+        font-family: var(--font-sans);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
         color: var(--color-ink-faint);
     }
@@ -451,22 +676,22 @@ select:focus[data-flux-control] {
 
 @layer utilities {
     /*
-     * Oswald in sentence case. The default, because uppercase on every heading
+     * Outfit in sentence case. The default, because uppercase on every heading
      * in the app would shout at people who are just trying to work.
      */
     .font-display {
         font-family: var(--font-display);
         font-weight: 600;
-        letter-spacing: 0.005em;
+        letter-spacing: -0.011em;
     }
 
     /* The poster treatment: marketing headlines only. */
     .font-display-caps {
         font-family: var(--font-display);
         font-weight: 700;
-        letter-spacing: 0.01em;
+        letter-spacing: -0.005em;
         text-transform: uppercase;
-        line-height: 0.96;
+        line-height: 1;
     }
 
     .font-data {
@@ -479,7 +704,7 @@ select:focus[data-flux-control] {
     }
     .card-lift:hover {
         transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(29, 31, 32, 0.07), 0 18px 40px -18px rgba(29, 31, 32, 0.26);
+        box-shadow: var(--shadow-lift);
     }
 
     .btn-lift {
@@ -487,7 +712,7 @@ select:focus[data-flux-control] {
     }
     .btn-lift:hover:not(:disabled) {
         transform: translateY(-1px);
-        box-shadow: 0 6px 20px -6px rgba(29, 31, 32, 0.3);
+        box-shadow: var(--shadow-lift);
     }
     .btn-lift:active:not(:disabled) {
         transform: translateY(0);

@@ -41,7 +41,7 @@
             <div class="grid sm:grid-cols-2 gap-8 sm:gap-6">
                 @foreach($columns as $heading => $items)
                     <div class="grid gap-4 content-start">
-                        <p class="font-data text-[10px] uppercase tracking-[0.16em] text-paper/40">{{ $heading }}</p>
+                        <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-paper/40">{{ $heading }}</p>
                         <ul class="grid gap-3">
                             @foreach($items as $item)
                                 <li>
@@ -59,10 +59,10 @@
 
         {{-- Baseline --}}
         <div class="py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <p class="font-data text-[10px] uppercase tracking-[0.14em] text-paper/35">
+            <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-paper/35">
                 &copy; {{ date('Y') }} Meshwork HQ
             </p>
-            <p class="font-data text-[10px] uppercase tracking-[0.14em] text-paper/35">
+            <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-paper/35">
                 {{ __('Nigeria') }}
             </p>
         </div>

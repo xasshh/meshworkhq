@@ -30,7 +30,7 @@
                     <a
                         href="{{ $link['href'] }}"
                         @if(isset($link['route'])) wire:navigate @endif
-                        class="font-data text-[11px] uppercase tracking-[0.14em] transition-colors {{ isset($link['route']) && request()->routeIs($link['route']) ? 'text-ink font-semibold' : 'text-ink-soft hover:text-ink' }}"
+                        class="text-sm font-semibold transition-colors {{ isset($link['route']) && request()->routeIs($link['route']) ? 'text-brand-deep' : 'text-ink-soft hover:text-ink' }}"
                     >{{ $link['label'] }}</a>
                 @endforeach
             </nav>
@@ -38,16 +38,16 @@
             <div class="ml-auto flex items-center gap-2 sm:gap-3">
                 @auth
                     <a href="{{ route('dashboard') }}" wire:navigate
-                       class="btn-lift font-data text-[11px] uppercase tracking-[0.12em] font-semibold px-4 sm:px-5 py-3 bg-brand-deep text-paper">
+                       class="btn btn-primary">
                         {{ __('Dashboard') }}
                     </a>
                 @else
                     <a href="{{ route('professional.login') }}"
-                       class="hidden sm:inline-flex font-data text-[11px] uppercase tracking-[0.14em] text-ink-soft hover:text-ink transition-colors px-2">
+                       class="hidden sm:inline-flex text-sm font-semibold text-ink-soft hover:text-ink transition-colors px-2">
                         {{ __('Log in') }}
                     </a>
                     <a href="{{ route('client.register') }}"
-                       class="btn-lift font-data text-[11px] uppercase tracking-[0.12em] font-semibold px-4 sm:px-5 py-3 bg-brand-deep text-paper whitespace-nowrap">
+                       class="btn btn-primary whitespace-nowrap">
                         {{ __('Post a brief') }}
                     </a>
                 @endauth
@@ -85,13 +85,13 @@
                     href="{{ $link['href'] }}"
                     @if(isset($link['route'])) wire:navigate @endif
                     @click="open = false"
-                    class="font-data text-[11px] uppercase tracking-[0.14em] text-ink-soft hover:text-ink py-3.5 border-b border-line-soft last:border-b-0 transition-colors"
+                    class="text-sm font-semibold text-ink-soft hover:text-ink py-3.5 border-b border-line-soft last:border-b-0 transition-colors"
                 >{{ $link['label'] }}</a>
             @endforeach
 
             @guest
                 <a href="{{ route('professional.login') }}"
-                   class="font-data text-[11px] uppercase tracking-[0.14em] text-ink-soft hover:text-ink py-3.5 transition-colors">
+                   class="text-sm font-semibold text-ink-soft hover:text-ink py-3.5 transition-colors">
                     {{ __('Log in') }}
                 </a>
             @endguest

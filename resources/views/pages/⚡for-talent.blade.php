@@ -35,7 +35,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
     <section class="bg-navy">
         <div class="grid lg:grid-cols-[1.05fr_0.95fr] items-stretch">
             <div class="order-2 lg:order-1 px-4 sm:px-6 lg:pl-[max(1.5rem,calc((100vw-72rem)/2))] lg:pr-14 py-14 sm:py-20 grid gap-6 content-center">
-                <p class="flex items-center gap-2.5 font-data text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-brand-lit">
+                <p class="flex items-center gap-2.5 font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] text-brand-lit">
                     <span class="w-2 h-2 bg-brand shrink-0" aria-hidden="true"></span>
                     {{ __('For talent') }}
                 </p>
@@ -50,11 +50,11 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
 
                 <div class="flex flex-col sm:flex-row gap-3 mt-1">
                     <a href="{{ route('professional.register') }}"
-                       class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand text-navy-deep text-center">
+                       class="btn-lift font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand text-navy-deep text-center">
                         {{ __('Create your profile') }}
                     </a>
                     <a href="{{ route('professional.login') }}"
-                       class="font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 border border-paper/25 text-paper/80 text-center hover:text-paper hover:border-paper/50 transition-colors">
+                       class="font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 border border-paper/25 text-paper/80 text-center hover:text-paper hover:border-paper/50 transition-colors">
                         {{ __('Sign in') }}
                     </a>
                 </div>
@@ -80,7 +80,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
             <div class="grid gap-3 mb-10 max-w-2xl">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('Why bother') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('Why bother') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-ink">
                     {{ __('The maths of a job board is against you') }}
                 </h2>
@@ -108,7 +108,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16">
             <div class="grid gap-5 content-start">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('Getting started') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('Getting started') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[16ch]">
                     {{ __('Your profile is the matching engine') }}
                 </h2>
@@ -116,13 +116,13 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
                     {{ __('There is no application and no approval queue. Sign up, tag your skills, write a few lines about your work, and briefs start arriving. Profiles need to be at least 70 percent complete before alerts begin, which takes about five minutes.') }}
                 </p>
                 <a href="{{ route('professional.register') }}"
-                   class="btn-lift w-fit mt-1 font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand-deep text-paper">
+                   class="btn-lift w-fit mt-1 font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand-deep text-paper">
                     {{ __('Create your profile') }}
                 </a>
             </div>
 
             <div class="grid gap-4 content-start">
-                <p class="font-data text-[10px] uppercase tracking-[0.14em] text-ink-faint">{{ __('Skills briefs are being posted for') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint">{{ __('Skills briefs are being posted for') }}</p>
                 @if($this->skills->isNotEmpty())
                     <div class="flex flex-wrap gap-2">
                         @foreach($this->skills as $skill)
@@ -135,7 +135,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
                 </p>
 
                 <a href="{{ route('directory') }}" wire:navigate
-                   class="font-data text-[11px] uppercase tracking-[0.14em] text-brand-deep hover:underline mt-2">
+                   class="font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-brand-deep hover:underline mt-2">
                     {{ trans_choice('{0}See the directory|{1}See the :count professional already here|[2,*]See the :count professionals already here', $this->professionalCount, ['count' => $this->professionalCount]) }}
                 </a>
             </div>
@@ -145,7 +145,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
     {{-- Credits, honestly --}}
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-6 max-w-3xl">
-            <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('About credits') }}</p>
+            <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('About credits') }}</p>
             <h2 class="font-display-caps text-3xl sm:text-4xl text-ink">{{ __('What a credit actually buys') }}</h2>
             <p class="text-sm sm:text-base text-ink-soft leading-relaxed">
                 {{ __('One credit reveals the client behind a brief and opens a direct thread with them. That is the whole product. You start with three free, and after that credits are bought in packs.') }}
@@ -154,7 +154,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
                 {{ __('Nothing is deducted for browsing, for being matched, or for being alerted. You only ever spend on a brief you have read and decided you want.') }}
             </p>
             <a href="{{ route('how-it-works') }}" wire:navigate
-               class="font-data text-[11px] uppercase tracking-[0.14em] text-brand-deep hover:underline">
+               class="font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-brand-deep hover:underline">
                 {{ __('See how the whole thing works') }}
             </a>
         </div>

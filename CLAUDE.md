@@ -401,23 +401,32 @@ Tailwind CSS v4 via the Vite plugin (no PostCSS config), Flux UI (`<flux:*>`), A
 
 #### The Wave System (design system)
 
-Tokens live in the `@theme` block of `resources/css/app.css`. Both core colours are taken from the logo: the near black of the wordmark and the steel blue of the HQ plate. **Blue is the only accent**, so it always means the same thing, a thing you can act on.
+Tokens live in the `@theme` block of `resources/css/app.css`.
+
+**Two accents, and the split is the whole point.** Blue is where you go: navigation, links, primary buttons, anything you click to move. Ember, the warm one, is where value moves: credits, unlocks, pitches received, the wave rail filling. A pill or a button in ember says money or momentum; one in blue says go here. Never pick between them for looks.
 
 | Role | Tokens |
 |---|---|
-| Ink | `--color-ink` `#1D1F20`, `-deep`, `-soft`, `-faint` |
-| Navy (dark sections) | `--color-navy` `#1E2A38`, `-deep`, `-raised` |
-| Ground | `--color-chalk` `#F2F2F3` (the logo's own background), `-soft`, `--color-paper`, `--color-line`, `-soft` |
-| Accent | `--color-brand` `#5980A6` for fills and marks, `--color-brand-deep` `#3F5F80` for **text and buttons**, plus `-lit` and `-wash` |
+| Ink | `--color-ink` `#1C1D22`, `-deep`, `-soft`, `-faint` |
+| Navy (dark sections) | `--color-navy` `#1B2432`, `-deep`, `-raised` |
+| Ground | `--color-chalk` `#F3F4F6`, `-soft`, `--color-paper`, `--color-line`, `-soft` |
+| Blue accent | `--color-brand` `#3F7DD4` for fills and marks, `--color-brand-deep` `#2C5FA8` for **text and white-on-fill**, plus `-lit` and `-wash` |
+| Ember accent | `--color-ember` `#E08A2B` for fills and marks, `--color-ember-deep` `#A05F17` for **text and white-on-fill**, plus `-lit` and `-wash` |
 | Semantic | `--color-live`, `--color-critical`, plus `-wash` variants |
+| Shape | `--radius-xs` through `--radius-xl`, `--radius-pill` |
+| Elevation | `--shadow-soft`, `--shadow-lift`, `--shadow-deep` |
 
-Use `brand-deep` wherever the blue carries text or sits behind white type: plain `brand` on chalk is about 3.6:1 and fails contrast, `brand-deep` is 5.9:1.
+The `-deep` variant of either accent is the one that carries text or sits behind white type. Plain `brand` under white is 4.1:1 and fails; `brand-deep` is 6.35:1 and `ember-deep` is 5.07:1. Every pairing in the palette was checked against WCAG AA, including `ink-faint` on chalk, which is why it is `#6B7079` rather than anything lighter.
 
-Fonts self-host at build time through the Vite plugin, which resolves **discrete weights only, no variable axes**: **Oswald** for display, **Archivo** for body, **Martian Mono** for data. Every number a user makes a decision on gets `font-data`, which carries `tabular-nums`.
+Fonts self-host at build time through the Vite plugin, which resolves **discrete weights only, no variable axes**: **Outfit** for display, **Manrope** for body, **Martian Mono** for data.
 
-Two display treatments, and the distinction matters:
-- `.font-display` is Oswald 600 **sentence case**. The default. App headings use this, because uppercase on every heading shouts at people trying to work.
-- `.font-display-caps` is Oswald 700 uppercase. **Marketing headlines only**: the hero, section headings, the auth panel, the footer statement.
+Mono is reserved for figures a person actually compares: money, counts, timestamps. It is **not** for labels. A single large statistic uses the display face instead, because nothing lines up against it and the slashed zero reads as machinery.
+
+Two display treatments:
+- `.font-display` is Outfit 600 **sentence case**. The default, for app and marketing headings alike.
+- `.font-display-caps` is Outfit 700 uppercase, for short labels only. Outfit is a wide geometric face where Oswald was condensed, so a long uppercase headline runs to six lines and pushes everything below the fold. The home hero was moved to sentence case for exactly that reason.
+
+Buttons are classes, not utility soup: `.btn` plus `.btn-primary` (blue), `.btn-ember` (money), `.btn-ink`, `.btn-ghost`, and `.btn-sm`. Use them rather than re-deriving padding and colour per page.
 
 Component classes are defined in `@layer components` rather than repeated as utility soup: `.wave-rail` / `.wave-track` / `.wave-seg`, `.seal`, `.pill`, `.fact`, `.tag`, `.panel`, `.eyebrow`. Reuse these before inventing new markup.
 
@@ -456,7 +465,7 @@ Photography lives in `public/images/hero-professional.jpg` and `auth-professiona
 
 - **No en dashes or em dashes anywhere in user-facing copy**, including interface text, emails and notifications. Ranges read as "₦350,000 to ₦500,000"; asides become commas or separate sentences.
 - **Naira only.** Never show a dollar figure, even illustratively. Use `&#8358;` in Blade with `number_format`, and never abbreviate (no "450k").
-- Square corners. Rounded corners were removed deliberately; do not reintroduce `rounded-*` on panels, buttons or tags.
+- Corners are soft, not square. Panels take `--radius-lg`, pills and buttons are fully rounded. An earlier version of this app was deliberately square edged; that was reversed because it read as severe on a screen people work in daily.
 
 For phone testing through a tunnel, `vite.config.js` reads `VITE_TUNNEL_HOST`:
 ```bash

@@ -87,40 +87,55 @@ new #[Title('Overview')] class extends Component
         :description="__('Where things stand this morning.')"
     >
         <x-slot:actions>
-            <a href="{{ route('professional.alerts') }}" wire:navigate class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+            <a href="{{ route('professional.alerts') }}" wire:navigate class="btn btn-primary">
+                <flux:icon name="bell-alert" variant="micro" />
                 {{ __('Go to alert feed') }}
             </a>
         </x-slot:actions>
     </x-page-header>
 
-    {{-- Profile gate. The single most consequential thing on this page. --}}
+    {{-- Profile gate. The single most consequential thing on this page, so it
+         gets the accent and sits above everything else. --}}
     @if($this->stats['completeness'] < 70)
-        <div class="mt-6 panel p-5 border-l-2 border-l-brand grid gap-2">
-            <p class="font-display text-base text-ink">{{ __('Your alerts are paused') }}</p>
-            <p class="text-sm text-ink-soft max-w-prose">
-                {{ __('The matching engine only sends briefs to profiles that are at least 70% complete. Yours is at :pct%.', ['pct' => $this->stats['completeness']]) }}
-            </p>
-            <a href="{{ route('professional.profile') }}" wire:navigate class="btn-lift w-fit mt-2 text-xs font-semibold px-4 py-2.5 bg-brand-deep text-paper">
-                {{ __('Finish your profile') }}
-            </a>
+        <div class="mt-6 panel-accent p-5 flex items-start gap-4">
+            <span class="icon-badge" data-tone="brand" data-size="lg">
+                <flux:icon name="exclamation-triangle" class="w-5 h-5" />
+            </span>
+            <div class="min-w-0 grid gap-2">
+                <p class="font-display text-base text-ink">{{ __('Your alerts are paused') }}</p>
+                <p class="text-sm text-ink-soft max-w-prose">
+                    {{ __('The matching engine only sends briefs to profiles that are at least 70% complete. Yours is at :pct%.', ['pct' => $this->stats['completeness']]) }}
+                </p>
+                <div class="mt-1 h-1.5 bg-line rounded-full overflow-hidden max-w-xs">
+                    <div class="h-full bg-brand-deep rounded-full transition-all duration-700"
+                         style="width: {{ $this->stats['completeness'] }}%"></div>
+                </div>
+                <a href="{{ route('professional.profile') }}" wire:navigate class="btn btn-primary btn-sm w-fit mt-2">
+                    {{ __('Finish your profile') }}
+                </a>
+            </div>
         </div>
     @endif
 
-    {{-- Stats --}}
-    <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line">
+    {{-- Where you stand. Credits carry the warm accent: that is the one number
+         here that is money rather than activity. --}}
+    <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
         @php
             $tiles = [
-                ['label' => __('New alerts'), 'value' => $this->stats['newAlerts'], 'href' => route('professional.alerts')],
-                ['label' => __('Credits'), 'value' => $this->stats['credits'], 'href' => route('professional.wallet')],
-                ['label' => __('Pitches sent'), 'value' => $this->stats['pitches'], 'href' => route('professional.pitches')],
-                ['label' => __('Unread messages'), 'value' => $this->unreadMessages, 'href' => route('professional.messages')],
+                ['label' => __('New alerts'), 'value' => $this->stats['newAlerts'], 'href' => route('professional.alerts'), 'icon' => 'bell-alert', 'tone' => 'brand'],
+                ['label' => __('Credits'), 'value' => $this->stats['credits'], 'href' => route('professional.wallet'), 'icon' => 'wallet', 'tone' => 'ember'],
+                ['label' => __('Pitches sent'), 'value' => $this->stats['pitches'], 'href' => route('professional.pitches'), 'icon' => 'paper-airplane', 'tone' => 'default'],
+                ['label' => __('Unread messages'), 'value' => $this->unreadMessages, 'href' => route('professional.messages'), 'icon' => 'chat-bubble-left-right', 'tone' => 'default'],
             ];
         @endphp
 
         @foreach($tiles as $tile)
-            <a href="{{ $tile['href'] }}" wire:navigate class="bg-paper p-5 grid gap-2 hover:bg-chalk-soft transition-colors">
+            <a href="{{ $tile['href'] }}" wire:navigate class="stat" data-tone="{{ $tile['tone'] }}">
+                <span class="icon-badge" data-tone="{{ $tile['tone'] }}">
+                    <flux:icon name="{{ $tile['icon'] }}" variant="micro" />
+                </span>
+                <span class="stat-value">{{ number_format($tile['value']) }}</span>
                 <span class="eyebrow">{{ $tile['label'] }}</span>
-                <span class="font-data text-3xl font-medium text-ink leading-none">{{ number_format($tile['value']) }}</span>
             </a>
         @endforeach
     </div>
@@ -128,10 +143,14 @@ new #[Title('Overview')] class extends Component
     <div class="mt-6 grid lg:grid-cols-5 gap-6 items-start">
 
         {{-- Recent alerts --}}
-        <section class="lg:col-span-3 panel">
+        <section class="lg:col-span-3 panel overflow-hidden">
             <div class="flex items-center justify-between gap-4 p-5 border-b border-line-soft">
                 <h2 class="font-display text-base text-ink">{{ __('Latest matches') }}</h2>
-                <a href="{{ route('professional.alerts') }}" wire:navigate class="text-xs font-semibold text-ink-soft hover:text-ink transition-colors">{{ __('See all') }}</a>
+                <a href="{{ route('professional.alerts') }}" wire:navigate
+                   class="inline-flex items-center gap-1 text-xs font-semibold text-brand-deep hover:text-ink transition-colors">
+                    {{ __('See all') }}
+                    <flux:icon name="arrow-right" variant="micro" />
+                </a>
             </div>
 
             @forelse($this->recentAlerts as $alert)
@@ -147,7 +166,7 @@ new #[Title('Overview')] class extends Component
                             </a>
                         </h3>
                         @if($alert->status === AlertStatus::Unlocked)
-                            <span class="pill" data-tone="warn">{{ __('Unlocked') }}</span>
+                            <span class="pill" data-tone="ember">{{ __('Unlocked') }}</span>
                         @endif
                     </div>
 
@@ -169,9 +188,17 @@ new #[Title('Overview')] class extends Component
                     </div>
                 </article>
             @empty
-                <div class="p-8 text-center grid gap-2">
-                    <p class="text-sm text-ink-soft">{{ __('No matched briefs yet.') }}</p>
-                    <p class="text-xs text-ink-faint">{{ __('They will appear here as soon as a client posts something in your skills.') }}</p>
+                <div class="m-5 empty-state">
+                    <span class="icon-badge" data-tone="brand" data-size="lg">
+                        <flux:icon name="inbox" class="w-5 h-5" />
+                    </span>
+                    <p class="font-display text-base text-ink">{{ __('No matched briefs yet') }}</p>
+                    <p class="text-sm text-ink-soft max-w-[42ch]">
+                        {{ __('They will appear here as soon as a client posts something in your skills.') }}
+                    </p>
+                    <a href="{{ route('professional.profile') }}" wire:navigate class="btn btn-ghost btn-sm mt-1">
+                        {{ __('Add more skills') }}
+                    </a>
                 </div>
             @endforelse
         </section>
@@ -180,18 +207,23 @@ new #[Title('Overview')] class extends Component
 
             {{-- Funnel --}}
             <section class="panel p-5 grid gap-4">
-                <div>
-                    <h2 class="font-display text-base text-ink">{{ __('Last 30 days') }}</h2>
-                    <p class="text-xs text-ink-faint mt-1">{{ __('How your alerts are converting.') }}</p>
+                <div class="flex items-start gap-3">
+                    <span class="icon-badge" data-tone="brand">
+                        <flux:icon name="chart-bar" variant="micro" />
+                    </span>
+                    <div class="min-w-0">
+                        <h2 class="font-display text-base text-ink">{{ __('Last 30 days') }}</h2>
+                        <p class="text-xs text-ink-faint mt-0.5">{{ __('How your alerts are converting.') }}</p>
+                    </div>
                 </div>
 
                 @php
                     $funnel = $this->funnel;
                     $peak = max(1, $funnel['received']);
                     $steps = [
-                        ['label' => __('Received'), 'value' => $funnel['received']],
-                        ['label' => __('Viewed'), 'value' => $funnel['viewed']],
-                        ['label' => __('Unlocked'), 'value' => $funnel['unlocked']],
+                        ['label' => __('Received'), 'value' => $funnel['received'], 'class' => 'bg-brand-lit'],
+                        ['label' => __('Viewed'), 'value' => $funnel['viewed'], 'class' => 'bg-brand'],
+                        ['label' => __('Unlocked'), 'value' => $funnel['unlocked'], 'class' => 'bg-ember'],
                     ];
                 @endphp
 
@@ -200,10 +232,11 @@ new #[Title('Overview')] class extends Component
                         <div class="grid gap-1.5">
                             <div class="flex items-baseline justify-between gap-3">
                                 <span class="text-xs text-ink-soft">{{ $step['label'] }}</span>
-                                <span class="font-data text-xs font-medium text-ink">{{ $step['value'] }}</span>
+                                <span class="font-data text-xs font-semibold text-ink">{{ $step['value'] }}</span>
                             </div>
-                            <div class="h-1.5 bg-line">
-                                <div class="h-full bg-brand transition-all duration-700" style="width: {{ round($step['value'] / $peak * 100) }}%"></div>
+                            <div class="h-2 bg-line rounded-full overflow-hidden">
+                                <div class="h-full {{ $step['class'] }} rounded-full transition-all duration-700"
+                                     style="width: {{ round($step['value'] / $peak * 100) }}%"></div>
                             </div>
                         </div>
                     @endforeach
@@ -211,10 +244,16 @@ new #[Title('Overview')] class extends Component
             </section>
 
             {{-- Credit activity --}}
-            <section class="panel">
+            <section class="panel overflow-hidden">
                 <div class="flex items-center justify-between gap-4 p-5 border-b border-line-soft">
-                    <h2 class="font-display text-base text-ink">{{ __('Credit activity') }}</h2>
-                    <a href="{{ route('professional.wallet') }}" wire:navigate class="text-xs font-semibold text-ink-soft hover:text-ink transition-colors">{{ __('Wallet') }}</a>
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="icon-badge" data-tone="ember">
+                            <flux:icon name="wallet" variant="micro" />
+                        </span>
+                        <h2 class="font-display text-base text-ink">{{ __('Credit activity') }}</h2>
+                    </div>
+                    <a href="{{ route('professional.wallet') }}" wire:navigate
+                       class="text-xs font-semibold text-ember-deep hover:text-ink transition-colors shrink-0">{{ __('Wallet') }}</a>
                 </div>
 
                 @forelse($this->recentTransactions as $transaction)

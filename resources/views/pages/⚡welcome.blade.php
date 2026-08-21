@@ -47,16 +47,16 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
             <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
 
                 <div class="grid gap-6 lg:gap-7">
-                    <p class="flex items-center gap-2.5 font-data text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-brand-deep">
+                    <p class="flex items-center gap-2.5 font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] text-brand-deep">
                         <span class="w-2 h-2 bg-brand shrink-0" aria-hidden="true"></span>
                         {{ __('Alert first, not search first') }}
                     </p>
 
-                    <h1 class="font-display-caps text-ink text-[2.75rem] leading-[0.95] sm:text-6xl lg:text-[4.25rem] xl:text-[4.75rem]">
+                    <h1 class="font-display text-ink text-[2.25rem] leading-[1.05] sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] max-w-[15ch]">
                         {{ __('The alert first marketplace for top African talent.') }}
                     </h1>
 
-                    <div class="w-24 h-0.5 bg-ink" aria-hidden="true"></div>
+                    <div class="w-16 h-1 rounded-full bg-ember" aria-hidden="true"></div>
 
                     <p class="text-lg sm:text-xl font-semibold text-ink leading-snug max-w-[30ch]">
                         {{ __('No scrolling job boards. No race to the bottom.') }}
@@ -68,11 +68,11 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
 
                     <div class="flex flex-col sm:flex-row gap-3 mt-1">
                         <a href="{{ route('client.register') }}"
-                           class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand-deep text-paper text-center">
+                           class="btn btn-primary px-7 py-3.5 text-center">
                             {{ __('Post a brief') }}
                         </a>
                         <a href="{{ route('professional.register') }}"
-                           class="font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 border border-ink text-ink text-center hover:bg-ink hover:text-paper transition-colors">
+                           class="btn btn-ghost px-7 py-3.5 text-center">
                             {{ __('Get alerts as talent') }}
                         </a>
                     </div>
@@ -104,7 +104,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
     <section id="how-it-works" class="border-b border-line scroll-mt-20">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
             <div class="grid gap-3 mb-10 sm:mb-14 max-w-2xl">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('How it works') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('How it works') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-ink">
                     {{ __('Four steps, and nobody wastes anybody time') }}
                 </h2>
@@ -163,7 +163,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
                 </ul>
 
                 <a href="{{ route('professional.register') }}"
-                   class="btn-lift w-fit mt-2 font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand text-navy-deep">
+                   class="btn w-fit mt-2 px-7 py-3.5 bg-ember-lit text-navy-deep">
                     {{ __('Get alerts as talent') }}
                 </a>
             </div>
@@ -185,7 +185,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div class="grid gap-5">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('For clients') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('For clients') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[16ch]">
                     {{ __('Fewer pitches, and better ones') }}
                 </h2>
@@ -193,7 +193,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
                     {{ __('Because professionals pay to reach you, only the ones who genuinely want the work get in touch. You read a handful of serious pitches instead of sorting through a hundred.') }}
                 </p>
                 <a href="{{ route('client.register') }}"
-                   class="btn-lift w-fit mt-1 font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand-deep text-paper">
+                   class="btn btn-primary w-fit mt-1 px-7 py-3.5">
                     {{ __('Post your first brief') }}
                 </a>
             </div>
@@ -206,7 +206,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
                     ['k' => __('Credits in early access'), 'v' => __('Free')],
                 ] as $fact)
                     <div class="bg-paper p-5 sm:p-6 grid gap-2">
-                        <dt class="font-data text-[10px] uppercase tracking-[0.14em] text-ink-faint">{{ $fact['k'] }}</dt>
+                        <dt class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint">{{ $fact['k'] }}</dt>
                         <dd class="font-display text-2xl text-ink">{{ $fact['v'] }}</dd>
                     </div>
                 @endforeach
@@ -220,11 +220,11 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
             <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
                 <div class="flex items-end justify-between gap-6 flex-wrap pb-6 border-b border-line mb-6">
                     <div class="grid gap-3">
-                        <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('The directory') }}</p>
+                        <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('The directory') }}</p>
                         <h2 class="font-display-caps text-3xl sm:text-4xl text-ink">{{ __('Who is here') }}</h2>
                     </div>
                     <a href="{{ route('directory') }}" wire:navigate
-                       class="font-data text-[11px] uppercase tracking-[0.14em] text-ink-soft hover:text-ink transition-colors">
+                       class="font-sans text-[11px] font-bold uppercase tracking-[0.1em] text-ink-soft hover:text-ink transition-colors">
                         {{ __('Browse everyone') }}
                     </a>
                 </div>

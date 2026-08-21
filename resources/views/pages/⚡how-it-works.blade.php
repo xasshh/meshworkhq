@@ -12,7 +12,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
     {{-- Statement --}}
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-6 max-w-3xl">
-            <p class="flex items-center gap-2.5 font-data text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-brand-deep">
+            <p class="flex items-center gap-2.5 font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] text-brand-deep">
                 <span class="w-2 h-2 bg-brand shrink-0" aria-hidden="true"></span>
                 {{ __('How it works') }}
             </p>
@@ -53,7 +53,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
     <section class="bg-navy">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-10">
             <div class="grid gap-4 max-w-2xl">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-lit">{{ __('The wave system') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-lit">{{ __('The wave system') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-paper">
                     {{ __('Three waves, one day, fifty people at most') }}
                 </h2>
@@ -76,7 +76,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
                                       @if($seg < $i) data-state="past" @endif></span>
                             @endfor
                         </div>
-                        <p class="font-data text-[10px] uppercase tracking-[0.14em] text-brand-lit">{{ $wave['w'] }} &middot; {{ $wave['t'] }}</p>
+                        <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-lit">{{ $wave['w'] }} &middot; {{ $wave['t'] }}</p>
                         <p class="font-display text-xl text-paper">{{ $wave['n'] }}</p>
                         <p class="text-sm text-paper/60 leading-relaxed">{{ $wave['d'] }}</p>
                     </div>
@@ -93,7 +93,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
     <section class="border-b border-line">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div class="grid gap-5">
-                <p class="font-data text-[10px] uppercase tracking-[0.18em] text-brand-deep">{{ __('What it costs') }}</p>
+                <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('What it costs') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[18ch]">
                     {{ __('Clients post free. Professionals pay per lead.') }}
                 </h2>
@@ -110,7 +110,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
                     ['k' => __('Credits on joining'), 'v' => __('3 free')],
                 ] as $fact)
                     <div class="bg-paper p-5 sm:p-6 grid gap-2">
-                        <dt class="font-data text-[10px] uppercase tracking-[0.14em] text-ink-faint">{{ $fact['k'] }}</dt>
+                        <dt class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint">{{ $fact['k'] }}</dt>
                         <dd class="font-display text-2xl text-ink">{{ $fact['v'] }}</dd>
                     </div>
                 @endforeach
@@ -124,11 +124,11 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
             <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[20ch]">{{ __('Ready when you are') }}</h2>
             <div class="flex flex-col sm:flex-row gap-3">
                 <a href="{{ route('client.register') }}"
-                   class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 bg-brand-deep text-paper text-center">
+                   class="btn-lift font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand-deep text-paper text-center">
                     {{ __('Post a brief') }}
                 </a>
                 <a href="{{ route('for-talent') }}" wire:navigate
-                   class="font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-7 py-4 border border-ink text-ink text-center hover:bg-ink hover:text-paper transition-colors">
+                   class="font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 border border-ink text-ink text-center hover:bg-ink hover:text-paper transition-colors">
                     {{ __('I am here to find work') }}
                 </a>
             </div>

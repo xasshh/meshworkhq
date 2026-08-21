@@ -22,8 +22,8 @@ export default defineConfig({
             ],
             refresh: true,
             fonts: [
-                bunny('Oswald', { weights: [500, 600, 700] }),
-                bunny('Archivo', { weights: [400, 500, 600, 700] }),
+                bunny('Outfit', { weights: [500, 600, 700] }),
+                bunny('Manrope', { weights: [400, 500, 600, 700, 800] }),
                 bunny('Martian Mono', { weights: [400, 500, 600] }),
             ],
         }),
