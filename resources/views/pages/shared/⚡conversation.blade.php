@@ -104,7 +104,7 @@ new #[Title('Conversation')] class extends Component
                  refusing to shrink pushed them off the side of a phone screen. --}}
             <div class="flex flex-wrap items-center justify-end gap-2 min-w-0">
                 <x-verified-badge :user="$counterpart" />
-                <x-track-record :user="$counterpart" />
+                <x-track-record :user="$counterpart" class="hidden sm:inline-flex" />
                 <span class="pill" data-tone="{{ $brief->status->isActive() ? 'live' : 'muted' }}">{{ $brief->status->label() }}</span>
             </div>
         </div>

@@ -382,8 +382,8 @@ select:focus[data-flux-control] {
         border-radius: var(--radius-pill);
         background: var(--color-chalk-soft);
         color: var(--color-ink-soft);
-        white-space: nowrap;
         max-width: 100%;
+        text-align: left;
     }
 
     .pill::before {
@@ -453,7 +453,6 @@ select:focus[data-flux-control] {
         border-radius: var(--radius-pill);
         background: var(--color-chalk-soft);
         color: var(--color-ink-soft);
-        white-space: nowrap;
         max-width: 100%;
     }
 
