@@ -64,7 +64,7 @@ new #[Title('Overview')] class extends Component
     }
 }; ?>
 
-<div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="now()->format('l, j F')"

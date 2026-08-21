@@ -25,7 +25,7 @@
 @endphp
 
 <section {{ $attributes->class(['border-b border-line' => ! $dark, 'bg-navy' => $dark]) }}>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
+    <div class="shell-wide py-14 sm:py-20 grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-16 items-start">
 
         <div class="grid gap-3 lg:sticky lg:top-24">
             @if($eyebrow)

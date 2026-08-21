@@ -99,7 +99,7 @@ new #[Title('Verifications')] class extends Component
     }
 }; ?>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Admin')"
@@ -168,11 +168,11 @@ new #[Title('Verifications')] class extends Component
 
                         <div class="flex flex-wrap items-center gap-2">
                             <button type="button" wire:click="approve" wire:loading.attr="disabled"
-                                    class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                                    class="btn btn-ink btn-sm">
                                 {{ __('Approve') }}
                             </button>
                             <button type="button" wire:click="reject" wire:loading.attr="disabled"
-                                    class="btn-lift text-xs font-semibold px-5 py-2.5 border border-critical text-critical">
+                                    class="btn btn-sm border-critical text-critical bg-paper">
                                 {{ __('Reject') }}
                             </button>
                             <button type="button" wire:click="cancel"
@@ -183,13 +183,13 @@ new #[Title('Verifications')] class extends Component
                     </div>
                 @else
                     <button type="button" wire:click="open({{ $applicant->id }})"
-                            class="btn-lift w-fit text-xs font-semibold px-5 py-2.5 bg-brand-deep text-paper">
+                            class="btn btn-primary btn-sm w-fit">
                         {{ __('Review') }}
                     </button>
                 @endif
             </article>
         @empty
-            <div class="panel p-8 sm:p-10 text-center grid gap-2">
+            <div class="empty-state">
                 <h2 class="font-display text-base text-ink">{{ __('Nothing waiting') }}</h2>
                 <p class="text-sm text-ink-soft">{{ __('Every submission has been decided.') }}</p>
             </div>

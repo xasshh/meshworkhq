@@ -74,7 +74,7 @@ new #[Title('Brief')] class extends Component
         ->values();
 @endphp
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <a href="{{ route('professional.alerts') }}" wire:navigate
        class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft hover:text-ink transition-colors mb-5">
@@ -211,7 +211,7 @@ new #[Title('Brief')] class extends Component
                 </span>
                 @if($unlock->conversation)
                     <a href="{{ route('professional.conversation', ['id' => $unlock->conversation->id]) }}" wire:navigate
-                       class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                       class="btn btn-ink btn-sm">
                         {{ $unlock->conversation->messages()->exists() ? __('Open thread') : __('Write your pitch') }}
                     </a>
                 @endif
@@ -224,7 +224,7 @@ new #[Title('Brief')] class extends Component
                     wire:click="unlockBrief"
                     wire:loading.attr="disabled"
                     @disabled(! $brief->isAvailableForUnlock())
-                    class="btn-lift inline-flex items-center gap-2.5 text-xs font-semibold px-5 py-2.5 bg-brand-deep text-paper disabled:opacity-40 disabled:cursor-not-allowed"
+                    class="btn btn-primary btn-sm"
                 >
                     <span wire:loading.remove wire:target="unlockBrief">
                         {{ $brief->isAvailableForUnlock() ? __('Unlock this brief') : __('No longer taking pitches') }}

@@ -73,7 +73,7 @@ new #[Title('My briefs')] class extends Component
     }
 }; ?>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Work')"
@@ -92,7 +92,7 @@ new #[Title('My briefs')] class extends Component
                 @endforeach
             </div>
 
-            <a href="{{ route('client.brief.create') }}" wire:navigate class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+            <a href="{{ route('client.brief.create') }}" wire:navigate class="btn btn-ink btn-sm">
                 {{ __('Post a brief') }}
             </a>
         </x-slot:actions>
@@ -156,7 +156,7 @@ new #[Title('My briefs')] class extends Component
                         <div class="flex flex-wrap gap-2">
                             @if($brief->status === \App\Enums\BriefStatus::Draft)
                                 <button type="button" wire:click="publish({{ $brief->id }})"
-                                        class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                                        class="btn btn-ink btn-sm">
                                     {{ __('Publish') }}
                                 </button>
                             @elseif($brief->status->isActive())
@@ -176,8 +176,8 @@ new #[Title('My briefs')] class extends Component
             <div class="mt-8">{{ $briefs->links() }}</div>
         @endif
     @else
-        <div class="mt-6 panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
-            <div class="w-10 h-10 border border-line grid place-items-center">
+        <div class="mt-6 empty-state">
+            <div class="icon-badge" data-tone="brand" data-size="lg">
                 <flux:icon name="document-text" variant="micro" class="text-ink-faint" />
             </div>
             <h2 class="font-display text-lg text-ink">
@@ -186,7 +186,7 @@ new #[Title('My briefs')] class extends Component
             <p class="text-sm text-ink-soft max-w-[44ch]">
                 {{ __('Describe the work, set a budget, pick the skills. The ten best matched professionals hear about it within seconds.') }}
             </p>
-            <a href="{{ route('client.brief.create') }}" wire:navigate class="btn-lift mt-2 text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+            <a href="{{ route('client.brief.create') }}" wire:navigate class="btn btn-ink btn-sm mt-2">
                 {{ __('Post your first brief') }}
             </a>
         </div>

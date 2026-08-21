@@ -43,7 +43,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
          The product is the visual: a real alert card, overlapping the
          portrait of the person who receives it. --}}
     <section class="border-b border-line overflow-hidden">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-24">
+        <div class="shell-wide py-12 sm:py-16 lg:py-24">
             <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
 
                 <div class="grid gap-6 lg:gap-7">
@@ -102,7 +102,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
 
     {{-- ── HOW IT WORKS ───────────────────────────────────────── --}}
     <section id="how-it-works" class="border-b border-line scroll-mt-20">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+        <div class="shell-wide py-14 sm:py-20">
             <div class="grid gap-3 mb-10 sm:mb-14 max-w-2xl">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('How it works') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-ink">
@@ -183,7 +183,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
 
     {{-- ── FOR CLIENTS ────────────────────────────────────────── --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div class="shell-wide py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div class="grid gap-5">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('For clients') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[16ch]">
@@ -217,7 +217,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
     {{-- ── DIRECTORY PREVIEW ──────────────────────────────────── --}}
     @if($this->featuredProfessionals->isNotEmpty())
         <section class="border-b border-line">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+            <div class="shell-wide py-14 sm:py-20">
                 <div class="flex items-end justify-between gap-6 flex-wrap pb-6 border-b border-line mb-6">
                     <div class="grid gap-3">
                         <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('The directory') }}</p>
@@ -234,7 +234,7 @@ new #[Layout('layouts::marketing')] #[Title('Meshwork HQ')] class extends Compon
                         <a href="{{ route('professionals.show', ['id' => $professional->id]) }}" wire:navigate
                            class="panel card-lift p-5 grid gap-3 content-start group">
                             <div class="flex items-start gap-3">
-                                <div class="w-11 h-11 bg-chalk border border-line grid place-items-center shrink-0 overflow-hidden">
+                                <div class="w-11 h-11 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0 overflow-hidden">
                                     @if($professional->avatar_path)
                                         <img src="{{ Storage::disk('public')->url($professional->avatar_path) }}" alt="" class="w-full h-full object-cover">
                                     @else

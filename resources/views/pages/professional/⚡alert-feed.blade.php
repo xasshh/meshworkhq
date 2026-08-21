@@ -96,7 +96,7 @@ new #[Title('Alert feed')] class extends Component
     }
 }; ?>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="now()->format('l, j F')"
@@ -106,13 +106,13 @@ new #[Title('Alert feed')] class extends Component
         :description="$unreadCount === 0 ? __('Nothing new right now. Matched briefs land here the moment they are published.') : null"
     >
         <x-slot:actions>
-            <div class="flex gap-1" role="group" aria-label="{{ __('Filter alerts') }}">
+            <div class="flex gap-1 p-1 bg-chalk rounded-full" role="group" aria-label="{{ __('Filter alerts') }}">
                 @foreach(['all' => __('All'), 'unread' => __('Unread'), 'unlocked' => __('Unlocked')] as $value => $label)
                     <button
                         type="button"
                         wire:click="$set('filter', '{{ $value }}')"
                         @if($filter === $value) aria-pressed="true" @endif
-                        class="text-xs font-semibold px-2.5 py-1.5 border transition-colors {{ $filter === $value ? 'bg-ink text-paper border-ink' : 'border-line text-ink-soft hover:text-ink hover:border-ink-faint' }}"
+                        class="text-xs font-semibold px-3.5 py-1.5 rounded-full transition-colors {{ $filter === $value ? 'bg-paper text-ink shadow-[var(--shadow-soft)]' : 'text-ink-soft hover:text-ink' }}"
                     >{{ $label }}</button>
                 @endforeach
             </div>
@@ -120,7 +120,7 @@ new #[Title('Alert feed')] class extends Component
             <select
                 wire:model.live="sort"
                 aria-label="{{ __('Sort alerts') }}"
-                class="text-xs font-semibold border border-line bg-paper text-ink-soft py-1.5 pl-2.5 pr-7"
+                class="text-xs font-semibold border border-line rounded-full bg-paper text-ink-soft py-2 pl-3.5 pr-8"
             >
                 <option value="newest">{{ __('Newest first') }}</option>
                 <option value="budget">{{ __('Highest budget') }}</option>
@@ -233,7 +233,7 @@ new #[Title('Alert feed')] class extends Component
                             </a>
                             @if($alert->unlock?->conversation)
                                 <a href="{{ route('professional.conversation', ['id' => $alert->unlock->conversation->id]) }}" wire:navigate
-                                   class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                                   class="btn btn-ink btn-sm">
                                     {{ __('Open thread') }}
                                 </a>
                             @endif
@@ -248,7 +248,7 @@ new #[Title('Alert feed')] class extends Component
                             wire:loading.attr="disabled"
                             wire:target="unlock({{ $alert->id }})"
                             @disabled(! $brief->isAvailableForUnlock())
-                            class="btn-lift inline-flex items-center gap-2.5 text-xs font-semibold px-4 py-2.5 bg-brand-deep text-paper disabled:opacity-40 disabled:cursor-not-allowed"
+                            class="btn btn-primary btn-sm"
                         >
                             <span wire:loading.remove wire:target="unlock({{ $alert->id }})">{{ __('Unlock this brief') }}</span>
                             <span wire:loading wire:target="unlock({{ $alert->id }})">{{ __('Unlocking') }}</span>
@@ -258,8 +258,8 @@ new #[Title('Alert feed')] class extends Component
                 </div>
             </article>
         @empty
-            <div class="panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
-                <div class="w-10 h-10 border border-line grid place-items-center">
+            <div class="empty-state">
+                <div class="icon-badge" data-tone="brand" data-size="lg">
                     <flux:icon name="bell-alert" variant="micro" class="text-ink-faint" />
                 </div>
                 <h2 class="font-display text-lg text-ink">{{ __('No alerts yet') }}</h2>
@@ -267,7 +267,7 @@ new #[Title('Alert feed')] class extends Component
                     {{ __('Briefs matching your skills arrive here. Make sure your profile is complete so the matching engine can find you.') }}
                 </p>
                 <a href="{{ route('professional.profile') }}" wire:navigate
-                   class="btn-lift mt-2 text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                   class="btn btn-ink btn-sm mt-2">
                     {{ __('Complete your profile') }}
                 </a>
             </div>

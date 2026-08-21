@@ -11,7 +11,7 @@
     @keydown.escape.window="open = false"
     class="sticky top-0 z-40 bg-paper/90 backdrop-blur-sm border-b border-line"
 >
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="shell-wide">
         <div class="h-16 sm:h-20 flex items-center gap-6">
 
             <a href="{{ route('home') }}" wire:navigate class="shrink-0" aria-label="{{ __('Meshwork HQ home') }}">
@@ -79,7 +79,7 @@
         x-collapse
         class="lg:hidden border-t border-line bg-paper"
     >
-        <nav class="max-w-6xl mx-auto px-4 sm:px-6 py-4 grid" aria-label="{{ __('Main') }}">
+        <nav class="shell-wide py-4 grid" aria-label="{{ __('Main') }}">
             @foreach($links as $link)
                 <a
                     href="{{ $link['href'] }}"

@@ -57,7 +57,7 @@ new #[Title('My pitches')] class extends Component
     }
 }; ?>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Work')"
@@ -73,10 +73,10 @@ new #[Title('My pitches')] class extends Component
             <table class="w-full min-w-[44rem] text-sm">
                 <thead>
                     <tr class="bg-chalk-soft">
-                        <th class="text-left font-data text-[10px] uppercase tracking-[0.13em] text-ink-faint font-medium px-5 py-3">{{ __('Brief') }}</th>
-                        <th class="text-left font-data text-[10px] uppercase tracking-[0.13em] text-ink-faint font-medium px-5 py-3">{{ __('Unlocked') }}</th>
-                        <th class="text-left font-data text-[10px] uppercase tracking-[0.13em] text-ink-faint font-medium px-5 py-3">{{ __('Budget') }}</th>
-                        <th class="text-left font-data text-[10px] uppercase tracking-[0.13em] text-ink-faint font-medium px-5 py-3">{{ __('State') }}</th>
+                        <th class="text-left font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint px-5 py-3">{{ __('Brief') }}</th>
+                        <th class="text-left font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint px-5 py-3">{{ __('Unlocked') }}</th>
+                        <th class="text-left font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint px-5 py-3">{{ __('Budget') }}</th>
+                        <th class="text-left font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-ink-faint px-5 py-3">{{ __('State') }}</th>
                         <th class="px-5 py-3"><span class="sr-only">{{ __('Actions') }}</span></th>
                     </tr>
                 </thead>
@@ -121,15 +121,15 @@ new #[Title('My pitches')] class extends Component
             <div class="mt-6">{{ $unlocks->links() }}</div>
         @endif
     @else
-        <div class="mt-6 panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
-            <div class="w-10 h-10 border border-line grid place-items-center">
+        <div class="mt-6 empty-state">
+            <div class="icon-badge" data-tone="brand" data-size="lg">
                 <flux:icon name="paper-airplane" variant="micro" class="text-ink-faint" />
             </div>
             <h2 class="font-display text-lg text-ink">{{ __('No pitches yet') }}</h2>
             <p class="text-sm text-ink-soft max-w-[44ch]">
                 {{ __('When you unlock a brief it appears here, so you can track whether the client replied.') }}
             </p>
-            <a href="{{ route('professional.alerts') }}" wire:navigate class="btn-lift mt-2 text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+            <a href="{{ route('professional.alerts') }}" wire:navigate class="btn btn-ink btn-sm mt-2">
                 {{ __('Browse your alerts') }}
             </a>
         </div>

@@ -663,6 +663,47 @@ select:focus[data-flux-control] {
         background: linear-gradient(180deg, var(--color-chalk-soft) 0%, var(--color-paper) 60%);
     }
 
+    /*
+     * Page shells.
+     *
+     * The column used to stop growing at around 1150px, so on a large monitor
+     * the whole app sat boxed in the middle of the screen with several hundred
+     * pixels of nothing either side. These keep growing with the display,
+     * while running text stays held by max-w-prose so lines never get long
+     * enough to lose your place on the way back.
+     */
+    .shell,
+    .shell-narrow,
+    .shell-wide {
+        width: 100%;
+        margin-inline: auto;
+        padding-inline: 1rem;
+    }
+
+    @media (min-width: 640px) {
+        .shell,
+        .shell-narrow,
+        .shell-wide {
+            padding-inline: 1.5rem;
+        }
+    }
+
+    .shell-narrow { max-width: 48rem; }
+    .shell { max-width: 64rem; }
+    .shell-wide { max-width: 72rem; }
+
+    @media (min-width: 1536px) {
+        .shell-narrow { max-width: 58rem; }
+        .shell { max-width: 82rem; }
+        .shell-wide { max-width: 92rem; }
+    }
+
+    @media (min-width: 1920px) {
+        .shell-narrow { max-width: 66rem; }
+        .shell { max-width: 94rem; }
+        .shell-wide { max-width: 106rem; }
+    }
+
     /* Section eyebrow */
     .eyebrow {
         font-family: var(--font-sans);

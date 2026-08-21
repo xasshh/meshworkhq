@@ -11,7 +11,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
 
     {{-- Statement --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-6 max-w-3xl">
+        <div class="shell-wide py-14 sm:py-20 grid gap-6 max-w-3xl">
             <p class="flex items-center gap-2.5 font-sans text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.1em] text-brand-deep">
                 <span class="w-2 h-2 bg-brand shrink-0" aria-hidden="true"></span>
                 {{ __('How it works') }}
@@ -29,7 +29,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
 
     {{-- The four steps --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+        <div class="shell-wide py-14 sm:py-20">
             <ol class="grid gap-px bg-line border border-line">
                 @foreach([
                     ['n' => '01', 'h' => __('The client writes a brief'), 'p' => __('What the work is, what it pays in naira, and the skills it needs. Posting is free and takes about two minutes. The brief stays a draft until they publish it, so nothing goes out half written.')],
@@ -51,7 +51,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
 
     {{-- The waves, explained properly --}}
     <section class="bg-navy">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-10">
+        <div class="shell-wide py-14 sm:py-20 grid gap-10">
             <div class="grid gap-4 max-w-2xl">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-lit">{{ __('The wave system') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-paper">
@@ -91,7 +91,7 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
 
     {{-- What it costs --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div class="shell-wide py-14 sm:py-20 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div class="grid gap-5">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('What it costs') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[18ch]">
@@ -120,11 +120,11 @@ new #[Layout('layouts::marketing')] #[Title('How it works')] class extends Compo
 
     {{-- Close --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-6 justify-items-start">
+        <div class="shell-wide py-14 sm:py-20 grid gap-6 justify-items-start">
             <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[20ch]">{{ __('Ready when you are') }}</h2>
             <div class="flex flex-col sm:flex-row gap-3">
                 <a href="{{ route('client.register') }}"
-                   class="btn-lift font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand-deep text-paper text-center">
+                   class="btn btn-primary px-7 py-3.5 text-center">
                     {{ __('Post a brief') }}
                 </a>
                 <a href="{{ route('for-talent') }}" wire:navigate

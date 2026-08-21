@@ -181,7 +181,7 @@ new #[Title('Verification')] class extends Component
                     <div class="grid gap-2">
                         <label class="text-sm font-semibold text-ink">{{ __('Certificate of incorporation') }}</label>
 
-                        <label class="btn-lift inline-flex items-center text-xs font-semibold px-4 py-2.5 bg-ink text-paper cursor-pointer w-fit">
+                        <label class="btn btn-ink btn-sm cursor-pointer w-fit">
                             <input type="file" wire:model="certificate" accept=".pdf,image/jpeg,image/png" class="sr-only">
                             <span wire:loading.remove wire:target="certificate">
                                 {{ $certificate ? __('Choose a different file') : __('Choose a file') }}
@@ -200,7 +200,7 @@ new #[Title('Verification')] class extends Component
             @endif
 
             <div class="flex items-center justify-end">
-                <button type="submit" wire:loading.attr="disabled" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                <button type="submit" wire:loading.attr="disabled" class="btn btn-ink btn-sm">
                     <span wire:loading.remove wire:target="submit">{{ __('Submit for verification') }}</span>
                     <span wire:loading wire:target="submit">{{ __('Submitting') }}</span>
                 </button>

@@ -28,7 +28,7 @@ new #[Title('Messages')] class extends Component
     }
 }; ?>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Work')"
@@ -54,7 +54,7 @@ new #[Title('Messages')] class extends Component
                     wire:key="conversation-{{ $conversation->id }}"
                     class="flex items-start gap-4 p-5 border-b border-line-soft last:border-b-0 hover:bg-chalk-soft transition-colors"
                 >
-                    <div class="w-9 h-9 bg-chalk-soft border border-line grid place-items-center shrink-0">
+                    <div class="w-9 h-9 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0">
                         <span class="font-display text-[11px] text-ink-faint">{{ $counterpart?->initials() ?? '?' }}</span>
                     </div>
 
@@ -89,8 +89,8 @@ new #[Title('Messages')] class extends Component
             <div class="mt-6">{{ $conversations->links() }}</div>
         @endif
     @else
-        <div class="mt-6 panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
-            <div class="w-10 h-10 border border-line grid place-items-center">
+        <div class="mt-6 empty-state">
+            <div class="icon-badge" data-tone="brand" data-size="lg">
                 <flux:icon name="chat-bubble-left-right" variant="micro" class="text-ink-faint" />
             </div>
             <h2 class="font-display text-lg text-ink">{{ __('No conversations yet') }}</h2>
@@ -102,7 +102,7 @@ new #[Title('Messages')] class extends Component
                 @endif
             </p>
             <a href="{{ $isPro ? route('professional.alerts') : route('client.brief.create') }}" wire:navigate
-               class="btn-lift mt-2 text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+               class="btn btn-ink btn-sm mt-2">
                 {{ $isPro ? __('Browse your alerts') : __('Post a brief') }}
             </a>
         </div>

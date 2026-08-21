@@ -73,7 +73,7 @@ new class extends Component
                     @foreach ($this->results as $professional)
                         <article class="bg-paper p-5 grid gap-3 content-start" wire:key="result-{{ $professional->id }}">
                             <div class="flex items-start gap-3">
-                                <div class="w-9 h-9 bg-chalk-soft border border-line grid place-items-center shrink-0 overflow-hidden">
+                                <div class="w-9 h-9 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0 overflow-hidden">
                                     @if ($professional->avatar_path)
                                         <img src="{{ Storage::disk('public')->url($professional->avatar_path) }}" alt="" class="w-full h-full object-cover">
                                     @else

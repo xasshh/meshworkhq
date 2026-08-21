@@ -79,7 +79,7 @@ new #[Title('Company profile')] class extends Component
     }
 }; ?>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Account')"
@@ -105,7 +105,7 @@ new #[Title('Company profile')] class extends Component
                 </div>
 
                 <div class="grid gap-1.5">
-                    <label class="btn-lift inline-flex items-center text-xs font-semibold px-4 py-2.5 bg-ink text-paper cursor-pointer w-fit">
+                    <label class="btn btn-ink btn-sm cursor-pointer w-fit">
                         <input type="file" wire:model="logo" accept="image/jpeg,image/png" class="sr-only">
                         <span wire:loading.remove wire:target="logo">{{ __('Choose a logo') }}</span>
                         <span wire:loading wire:target="logo">{{ __('Uploading') }}</span>
@@ -177,7 +177,7 @@ new #[Title('Company profile')] class extends Component
         </section>
 
         <div class="flex items-center justify-end">
-            <button type="submit" wire:loading.attr="disabled" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+            <button type="submit" wire:loading.attr="disabled" class="btn btn-ink btn-sm">
                 <span wire:loading.remove wire:target="save">{{ __('Save profile') }}</span>
                 <span wire:loading wire:target="save">{{ __('Saving') }}</span>
             </button>

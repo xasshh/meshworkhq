@@ -213,7 +213,7 @@ new #[Title('Post a brief')] class extends Component
                 </section>
 
                 <div class="flex justify-end">
-                    <button type="submit" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                    <button type="submit" class="btn btn-ink btn-sm">
                         {{ __('Continue to skills') }}
                     </button>
                 </div>
@@ -280,7 +280,7 @@ new #[Title('Post a brief')] class extends Component
                 <button type="button" wire:click="backToForm" class="text-xs font-semibold px-4 py-2.5 border border-line text-ink-soft hover:text-ink hover:border-ink-faint transition-colors">
                     {{ __('Back') }}
                 </button>
-                <button type="button" wire:click="confirmTags" wire:loading.attr="disabled" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper">
+                <button type="button" wire:click="confirmTags" wire:loading.attr="disabled" class="btn btn-ink btn-sm">
                     <span wire:loading.remove wire:target="confirmTags">{{ __('Publish brief') }}</span>
                     <span wire:loading wire:target="confirmTags">{{ __('Publishing') }}</span>
                 </button>
@@ -322,7 +322,7 @@ new #[Title('Post a brief')] class extends Component
 
                 <div class="flex flex-wrap gap-2 mt-2">
                     <a href="{{ route('client.brief.detail', ['ulid' => $briefUlid]) }}" wire:navigate
-                       class="btn-lift text-xs font-semibold px-5 py-2.5 bg-brand-deep text-paper">
+                       class="btn btn-primary btn-sm">
                         {{ __('View your brief') }}
                     </a>
                     <button type="button" wire:click="restart"

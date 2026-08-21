@@ -50,7 +50,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
 
                 <div class="flex flex-col sm:flex-row gap-3 mt-1">
                     <a href="{{ route('professional.register') }}"
-                       class="btn-lift font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand text-navy-deep text-center">
+                       class="btn px-7 py-3.5 bg-ember-lit text-navy-deep text-center">
                         {{ __('Create your profile') }}
                     </a>
                     <a href="{{ route('professional.login') }}"
@@ -78,7 +78,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
 
     {{-- Why it is different --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
+        <div class="shell-wide py-14 sm:py-20">
             <div class="grid gap-3 mb-10 max-w-2xl">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('Why bother') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl lg:text-5xl text-ink">
@@ -106,7 +106,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
 
     {{-- Getting started --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16">
+        <div class="shell-wide py-14 sm:py-20 grid lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16">
             <div class="grid gap-5 content-start">
                 <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('Getting started') }}</p>
                 <h2 class="font-display-caps text-3xl sm:text-4xl text-ink max-w-[16ch]">
@@ -116,7 +116,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
                     {{ __('There is no application and no approval queue. Sign up, tag your skills, write a few lines about your work, and briefs start arriving. Profiles need to be at least 70 percent complete before alerts begin, which takes about five minutes.') }}
                 </p>
                 <a href="{{ route('professional.register') }}"
-                   class="btn-lift w-fit mt-1 font-sans text-[11px] font-bold uppercase tracking-[0.1em] font-semibold px-7 py-4 bg-brand-deep text-paper">
+                   class="btn btn-primary w-fit mt-1">
                     {{ __('Create your profile') }}
                 </a>
             </div>
@@ -144,7 +144,7 @@ new #[Layout('layouts::marketing')] #[Title('For talent')] class extends Compone
 
     {{-- Credits, honestly --}}
     <section class="border-b border-line">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 grid gap-6 max-w-3xl">
+        <div class="shell-wide py-14 sm:py-20 grid gap-6 max-w-3xl">
             <p class="font-sans text-[10px] font-bold uppercase tracking-[0.1em] text-brand-deep">{{ __('About credits') }}</p>
             <h2 class="font-display-caps text-3xl sm:text-4xl text-ink">{{ __('What a credit actually buys') }}</h2>
             <p class="text-sm sm:text-base text-ink-soft leading-relaxed">

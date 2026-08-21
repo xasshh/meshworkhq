@@ -123,7 +123,7 @@ new #[Title('Brief')] class extends Component
     }
 }; ?>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <a href="{{ route('client.briefs') }}" wire:navigate
        class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft hover:text-ink transition-colors mb-5">
@@ -161,7 +161,7 @@ new #[Title('Brief')] class extends Component
         @if($brief->status === BriefStatus::Draft || $brief->status->isActive())
             <div class="mt-5 flex flex-wrap gap-2">
                 @if($brief->status === BriefStatus::Draft)
-                    <button type="button" wire:click="publish" class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                    <button type="button" wire:click="publish" class="btn btn-ink btn-sm">
                         {{ __('Publish brief') }}
                     </button>
                 @else
@@ -237,7 +237,7 @@ new #[Title('Brief')] class extends Component
             @forelse($brief->unlocks as $unlock)
                 <article class="panel p-5 mb-3 grid gap-4" wire:key="response-{{ $unlock->id }}">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 bg-chalk-soft border border-line grid place-items-center shrink-0">
+                        <div class="w-10 h-10 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0">
                             <span class="font-display text-xs text-ink-faint">{{ $unlock->professional?->initials() }}</span>
                         </div>
 
@@ -282,7 +282,7 @@ new #[Title('Brief')] class extends Component
                                 <button type="button"
                                         wire:click="hire({{ $unlock->professional_id }})"
                                         wire:confirm="{{ __('Hire :name? This closes the brief to new pitches.', ['name' => $unlock->professional?->name]) }}"
-                                        class="btn-lift text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                                        class="btn btn-ink btn-sm">
                                     {{ __('Hire') }}
                                 </button>
                             @endif
@@ -290,7 +290,7 @@ new #[Title('Brief')] class extends Component
                     </div>
                 </article>
             @empty
-                <div class="panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
+                <div class="empty-state">
                     <h2 class="font-display text-lg text-ink">{{ __('No responses yet') }}</h2>
                     <p class="text-sm text-ink-soft max-w-[44ch]">
                         @if($brief->status === BriefStatus::Draft)

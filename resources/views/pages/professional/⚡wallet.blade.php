@@ -29,7 +29,7 @@ new #[Title('Wallet')] class extends Component
     }
 }; ?>
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <x-page-header
         :eyebrow="__('Account')"
@@ -38,7 +38,7 @@ new #[Title('Wallet')] class extends Component
     />
 
     {{-- Balance --}}
-    <section class="mt-6 bg-ink p-6 sm:p-8 grid gap-5">
+    <section class="mt-6 bg-ink rounded-xl shadow-[var(--shadow-lift)] p-6 sm:p-8 grid gap-5">
         <div class="flex items-end justify-between gap-6 flex-wrap">
             <div>
                 <p class="eyebrow text-paper/40">{{ __('Available balance') }}</p>
@@ -55,7 +55,7 @@ new #[Title('Wallet')] class extends Component
 
         <div class="grid grid-flow-col gap-[3px]" aria-hidden="true">
             @for($i = 1; $i <= 20; $i++)
-                <span class="h-4 {{ $i <= min(20, $balance) ? 'bg-brand' : 'bg-paper/15' }}"></span>
+                <span class="h-4 rounded-sm {{ $i <= min(20, $balance) ? 'bg-ember' : 'bg-paper/15' }}"></span>
             @endfor
         </div>
     </section>
@@ -77,9 +77,9 @@ new #[Title('Wallet')] class extends Component
             <span class="pill" data-tone="live">{{ __('Paystack secured') }}</span>
         </div>
 
-        <div class="mt-5 grid sm:grid-cols-2 gap-px bg-line border border-line">
+        <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             @foreach($this->bundles as $bundle)
-                <div class="bg-paper p-5 grid gap-3" wire:key="bundle-{{ $bundle->id }}">
+                <div class="panel p-5 grid gap-3 card-lift" wire:key="bundle-{{ $bundle->id }}">
                     <div class="flex items-baseline justify-between gap-3">
                         <span class="font-display text-sm text-ink">{{ $bundle->name }}</span>
                         <span class="font-data text-xs text-ink-faint">{{ $bundle->credits }} {{ __('credits') }}</span>
@@ -93,7 +93,7 @@ new #[Title('Wallet')] class extends Component
                     <form method="POST" action="{{ route('professional.wallet.checkout', ['bundle' => $bundle->id]) }}">
                         @csrf
                         <button type="submit"
-                                class="btn-lift w-full font-data text-[10px] uppercase tracking-[0.12em] font-semibold px-4 py-3 bg-brand-deep text-paper">
+                                class="btn btn-ember w-full">
                             {{ __('Buy this pack') }}
                         </button>
                     </form>

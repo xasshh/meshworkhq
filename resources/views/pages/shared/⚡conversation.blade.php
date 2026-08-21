@@ -74,7 +74,7 @@ new #[Title('Conversation')] class extends Component
     $brief = $this->conversation->brief;
 @endphp
 
-<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+<div class="shell-narrow py-8 sm:py-10">
 
     <a href="{{ $isPro ? route('professional.messages') : route('client.messages') }}" wire:navigate
        class="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-soft hover:text-ink transition-colors mb-5">
@@ -85,7 +85,7 @@ new #[Title('Conversation')] class extends Component
     {{-- Who and what this thread is about --}}
     <header class="panel p-5 grid gap-4">
         <div class="flex items-start gap-4">
-            <div class="w-11 h-11 bg-chalk-soft border border-line grid place-items-center shrink-0">
+            <div class="w-11 h-11 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0">
                 <span class="font-display text-sm text-ink-faint">{{ $counterpart?->initials() ?? '?' }}</span>
             </div>
 
@@ -161,7 +161,7 @@ new #[Title('Conversation')] class extends Component
                 </div>
             </div>
         @empty
-            <div class="panel p-8 sm:p-10 text-center grid gap-2">
+            <div class="empty-state">
                 <h2 class="font-display text-base text-ink">
                     {{ $isPro ? __('Write the first message') : __('Nothing said yet') }}
                 </h2>
@@ -188,7 +188,7 @@ new #[Title('Conversation')] class extends Component
 
         <div class="flex items-center justify-between gap-3">
             <span class="text-[11px] text-ink-faint">{{ __('Messages are logged. Keep payment discussions on terms you both agree in writing.') }}</span>
-            <button type="submit" wire:loading.attr="disabled" class="btn-lift text-xs font-semibold px-5 py-2.5 bg-ink text-paper shrink-0">
+            <button type="submit" wire:loading.attr="disabled" class="btn btn-ink btn-sm shrink-0">
                 <span wire:loading.remove wire:target="send">{{ __('Send') }}</span>
                 <span wire:loading wire:target="send">{{ __('Sending') }}</span>
             </button>

@@ -135,7 +135,7 @@ new #[Layout('layouts::marketing')] class extends Component
 <div>
     <x-marketing-nav />
 
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <div class="shell py-10 sm:py-14">
 
         <x-breadcrumbs
             class="mb-6"
@@ -232,7 +232,7 @@ new #[Layout('layouts::marketing')] class extends Component
                         </p>
                     @else
                         <button type="button" wire:click="invite" wire:loading.attr="disabled"
-                                class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-5 py-3.5 bg-brand-deep text-paper">
+                                class="btn btn-primary">
                             <span wire:loading.remove wire:target="invite">{{ __('Alert them to this brief') }}</span>
                             <span wire:loading wire:target="invite">{{ __('Sending') }}</span>
                         </button>
@@ -243,7 +243,7 @@ new #[Layout('layouts::marketing')] class extends Component
                         {{ __('You have no live briefs right now. Post one and :name can be alerted to it.', ['name' => str($pro->name)->before(' ')]) }}
                     </p>
                     <a href="{{ route('client.brief.create') }}" wire:navigate
-                       class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-5 py-3.5 bg-brand-deep text-paper text-center">
+                       class="btn btn-primary text-center">
                         {{ __('Post a brief') }}
                     </a>
 
@@ -252,7 +252,7 @@ new #[Layout('layouts::marketing')] class extends Component
                         {{ __('Post a brief describing the work. :name is alerted if it matches their skills, and unlocks it to pitch you directly.', ['name' => str($pro->name)->before(' ')]) }}
                     </p>
                     <a href="{{ auth()->check() ? route('dashboard') : route('client.register') }}"
-                       class="btn-lift font-data text-[11px] uppercase tracking-[0.14em] font-semibold px-5 py-3.5 bg-brand-deep text-paper text-center">
+                       class="btn btn-primary text-center">
                         {{ __('Post a brief') }}
                     </a>
                     <p class="text-xs text-ink-faint">{{ __('Free to post. No commission on completed work.') }}</p>

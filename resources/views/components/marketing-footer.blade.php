@@ -16,7 +16,7 @@
 @endphp
 
 <footer class="bg-navy text-paper">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="shell-wide">
 
         {{-- Closing pitch --}}
         <div class="py-14 sm:py-20 grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 border-b border-paper/10">

@@ -84,7 +84,7 @@ new #[Layout('layouts::marketing')] #[Title('Find professionals')] class extends
 
     <x-marketing-nav />
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+    <div class="shell py-10 sm:py-14">
 
         <header class="pb-6 border-b border-line">
             <p class="eyebrow mb-3">{{ __('Directory') }}</p>
@@ -138,7 +138,7 @@ new #[Layout('layouts::marketing')] #[Title('Find professionals')] class extends
                         class="panel card-lift p-5 grid gap-3 content-start group"
                     >
                         <div class="flex items-start gap-3">
-                            <div class="w-11 h-11 bg-chalk border border-line grid place-items-center shrink-0 overflow-hidden">
+                            <div class="w-11 h-11 rounded-full bg-brand-wash border border-line grid place-items-center shrink-0 overflow-hidden">
                                 @if($professional->avatar_path)
                                     <img src="{{ Storage::disk('public')->url($professional->avatar_path) }}" alt="" class="w-full h-full object-cover">
                                 @else
@@ -185,13 +185,13 @@ new #[Layout('layouts::marketing')] #[Title('Find professionals')] class extends
                 <div class="mt-8">{{ $professionals->links() }}</div>
             @endif
         @else
-            <div class="mt-6 panel p-10 sm:p-14 text-center grid gap-3 justify-items-center">
+            <div class="mt-6 empty-state">
                 <h2 class="font-display text-lg text-ink">{{ __('Nobody matches that yet') }}</h2>
                 <p class="text-sm text-ink-soft max-w-[44ch]">
                     {{ __('Try a different skill or clear the search. The directory grows as professionals complete their profiles.') }}
                 </p>
                 @if($search !== '' || $skill !== '')
-                    <button type="button" wire:click="clearFilters" class="btn-lift mt-2 text-xs font-semibold px-4 py-2.5 bg-ink text-paper">
+                    <button type="button" wire:click="clearFilters" class="btn btn-ink btn-sm mt-2">
                         {{ __('Clear filters') }}
                     </button>
                 @endif
