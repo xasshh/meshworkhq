@@ -70,6 +70,7 @@ return [
         'professional.register',
         'client.login',
         'client.register',
+        'admin.',
         'dashboard',
         'login',
         'register',

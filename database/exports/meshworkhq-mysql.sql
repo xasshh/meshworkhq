@@ -3,7 +3,7 @@
 -- Schema compiled by Laravel's own MySQL grammar, so it is identical to
 -- what `php artisan migrate` produces on the server. Carries the skill
 -- taxonomy, the credit bundles and the migrations ledger. No user data.
--- Generated 2026-08-20
+-- Generated 2026-08-21
 
 SET NAMES utf8mb4;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -132,6 +132,7 @@ alter table `payments` add constraint `payments_credit_bundle_id_foreign` foreig
 alter table `payments` add index `payments_user_id_status_index`(`user_id`, `status`);
 alter table `payments` add unique `payments_reference_unique`(`reference`);
 alter table `payments` add index `payments_status_index`(`status`);
+alter table `users` add `is_admin` tinyint(1) not null default '0' after `role`;
 
 -- skills: 40 rows
 INSERT INTO `skills` (`id`, `name`, `slug`, `category`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES (1, 'Brand Strategy', 'brand-strategy', 'creative', 1, 1, '2026-06-11 18:14:42', '2026-06-11 18:14:42');
@@ -182,7 +183,7 @@ INSERT INTO `credit_bundles` (`id`, `name`, `credits`, `price_kobo`, `is_active`
 INSERT INTO `credit_bundles` (`id`, `name`, `credits`, `price_kobo`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES (4, 'Pro Pack', 50, 1750000, 1, 4, '2026-08-19 09:02:31', '2026-08-19 09:02:31');
 INSERT INTO `credit_bundles` (`id`, `name`, `credits`, `price_kobo`, `is_active`, `sort_order`, `created_at`, `updated_at`) VALUES (5, 'Power Pack', 150, 4500000, 1, 5, '2026-08-19 09:02:31', '2026-08-19 09:02:31');
 
--- migrations: 21 rows
+-- migrations: 22 rows
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1, '0001_01_01_000000_create_users_table', 1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2, '0001_01_01_000001_create_cache_table', 1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (3, '0001_01_01_000002_create_jobs_table', 1);
@@ -204,5 +205,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (18, '2026_08_19_13
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (19, '2026_08_19_132105_add_verification_to_users_table', 1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (20, '2026_08_19_153650_create_payments_table', 1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (21, '2026_08_19_163026_backfill_email_verified_at_for_existing_users', 1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (22, '2026_08_21_082817_add_is_admin_to_users_table', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -3,6 +3,7 @@
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\UnlockController;
+use App\Http\Controllers\VerificationDocumentController;
 use Illuminate\Support\Facades\Route;
 
 Route::livewire('/', 'pages::welcome')->name('home');
@@ -61,6 +62,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('verification', 'pages::client.verification')->name('verification');
         Route::livewire('brief/{ulid}', 'pages::client.brief-detail')->name('brief.detail');
         Route::livewire('conversation/{id}', 'pages::shared.conversation')->name('conversation');
+    });
+
+    // Staff. Gated on the is_admin flag, which only the admin:grant command
+    // can set, and kept out of the search index by config/seo.php.
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::livewire('verifications', 'pages::admin.verifications')->name('verifications');
+
+        // Streamed from the private disk so a certificate is never given a
+        // public path.
+        Route::get('verifications/{user}/document', [VerificationDocumentController::class, 'show'])
+            ->name('verifications.document');
     });
 });
 

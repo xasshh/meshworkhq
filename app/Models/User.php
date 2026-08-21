@@ -51,6 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     protected function casts(): array
     {
         return [
+            'is_admin' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => Role::class,
@@ -66,6 +67,15 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     public function isClient(): bool
     {
         return $this->role === Role::Client;
+    }
+
+    /**
+     * Staff access. Deliberately not in the fillable list, and only grantable
+     * through the admin:grant command, so no request payload can ever set it.
+     */
+    public function isAdmin(): bool
+    {
+        return (bool) $this->is_admin;
     }
 
     public function isProfessional(): bool

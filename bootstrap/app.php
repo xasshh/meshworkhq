@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'admin' => AdminMiddleware::class,
         ]);
 
         // Paystack posts server to server and carries no session token. It is

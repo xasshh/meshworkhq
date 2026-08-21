@@ -2,6 +2,12 @@
     $user = auth()->user();
     $isPro = $user->isProfessional();
 
+    // A count beside the nav item, so a waiting submission is visible without
+    // remembering to look.
+    $pendingVerifications = $user->isAdmin()
+        ? \App\Models\User::where('verification_status', \App\Enums\VerificationStatus::Pending)->count()
+        : 0;
+
     $unreadAlerts = $isPro
         ? \App\Models\Alert::where('professional_id', $user->id)
             ->where('status', \App\Enums\AlertStatus::Notified)
@@ -113,6 +119,16 @@
                             {{ __('Post a brief') }}
                         </a>
                     </div>
+                @endif
+
+                {{-- Staff only. An admin is also a client or a professional, so
+                     this sits alongside whichever nav they already see. --}}
+                @if($user->isAdmin())
+                    <flux:sidebar.group :heading="__('Admin')" class="grid">
+                        <x-nav-link :href="route('admin.verifications')" :current="request()->routeIs('admin.verifications')" icon="shield-check" :badge="$pendingVerifications">
+                            {{ __('Verifications') }}
+                        </x-nav-link>
+                    </flux:sidebar.group>
                 @endif
 
             </flux:sidebar.nav>

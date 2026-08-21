@@ -7,6 +7,7 @@ use App\Exceptions\VerificationNotAllowedException;
 use App\Models\User;
 use App\Notifications\VerificationApprovedNotification;
 use App\Notifications\VerificationRejectedNotification;
+use App\Notifications\VerificationSubmittedNotification;
 use App\Services\Verification\NinVerifier;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -50,6 +51,10 @@ final class VerificationService
             'verification_notes' => $result->failureReason,
         ])->save();
 
+        if ($status === VerificationStatus::Pending) {
+            $this->notifyReviewers($user);
+        }
+
         return $status;
     }
 
@@ -83,7 +88,20 @@ final class VerificationService
             Storage::disk(self::DISK)->delete($previous);
         }
 
+        $this->notifyReviewers($user);
+
         return VerificationStatus::Pending;
+    }
+
+    /**
+     * A submission nobody is told about sits pending forever, and the client
+     * has already been promised a decision either way.
+     */
+    private function notifyReviewers(User $applicant): void
+    {
+        User::where('is_admin', true)
+            ->get()
+            ->each(fn (User $admin) => $admin->notify(new VerificationSubmittedNotification($applicant)));
     }
 
     /**

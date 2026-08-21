@@ -94,4 +94,15 @@ test('role middleware blocks cross-role access', function () {
 
     $this->actingAs($client)->get(route('professional.dashboard'))->assertForbidden();
     $this->actingAs($professional)->get(route('client.dashboard'))->assertForbidden();
+
+    // The admin area shows identity documents, so neither role reaches it.
+    $this->actingAs($client)->get(route('admin.verifications'))->assertForbidden();
+    $this->actingAs($professional)->get(route('admin.verifications'))->assertForbidden();
+});
+
+test('the admin verification queue renders for staff', function () {
+    $admin = User::factory()->client()->create();
+    $admin->forceFill(['is_admin' => true])->save();
+
+    $this->actingAs($admin->refresh())->get(route('admin.verifications'))->assertOk();
 });
